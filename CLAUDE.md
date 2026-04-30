@@ -1,5 +1,7 @@
 # givecare-evals
 
+> Ecosystem context: see `~/agents/wiki/givecare-system.md` — this repo is in the **evaluation layer + open-source credibility** domain.
+
 Pure public dataset repo. No runtime package. No private traces. It contains versioned caregiver AI eval records and public SDOH instruments, intended for GitHub and Hugging Face distribution.
 
 ## Repo

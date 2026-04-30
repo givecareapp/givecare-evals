@@ -1,24 +1,41 @@
-# gc-evals
+# caregiver-evals
 
-Pure JSONL eval dataset repo. No build step, no runtime — just versioned test cases published to HuggingFace.
+Pure public dataset repo. No runtime package — just versioned evaluation records and public SDOH instruments, published to HuggingFace.
 
 ## Repo
 
-`givecareapp/caregiver-evals` — published to HuggingFace as `GiveCare Caregiver AI Evaluation Dataset` (CC-BY-4.0).
+`givecareapp/caregiver-evals` — public caregiver AI safety evaluation dataset (CC-BY-4.0).
+
+## Scope
+
+Included:
+
+- Caregiver AI safety/quality eval cases
+- Red-team and boundary scenarios
+- Adapted public caregiver scenarios
+- Multi-turn continuity scenarios
+- Public GiveCare SDOH instruments: SDOH-6, EMA-3, SDOH-30
+
+Excluded:
+
+- Benefits program catalog (canonical owner: `../gc-benefits`)
+- Mira runtime/prompts/private traces
+- Production benchmark runner/scoring harness (canonical owner: `../gc-bench`)
+- CWBS-14 redistribution material pending original-author licensing confirmation
 
 ## What's here
 
-```
+```text
 data/
-  all.jsonl              # merged dataset (all splits)
-  core-behaviors.jsonl   # 40 functional tests
-  red-team.jsonl         # 22 adversarial attacks
-  reddit-caregivers.jsonl# 47 real caregiver scenarios (adapted Reddit posts)
-  multi-turn.jsonl       # 9 stateful conversation scenarios
-  benefits-programs.jsonl# 102 US caregiver benefit programs
-  instruments.json       # 3 validated caregiver assessment instruments
+  all.jsonl               # merged dataset (all eval splits)
+  core-behaviors.jsonl    # 40 functional tests
+  red-team.jsonl          # 22 adversarial attacks
+  reddit-caregivers.jsonl # 47 realistic caregiver scenarios adapted from public posts
+  multi-turn.jsonl        # 9 stateful conversation scenarios
+  instruments.json        # 3 public caregiver SDOH assessment instruments
 scripts/
-  convert-yaml-to-jsonl.ts  # YAML → JSONL conversion utility (needs node/tsx)
+  convert-yaml-to-jsonl.ts # optional YAML -> JSONL conversion utility
+  validate.py              # dependency-free dataset validator
 ```
 
 ## Record format
@@ -31,20 +48,40 @@ scripts/
   "subcategory": "...",
   "input": "caregiver message text",
   "expected_behaviors": ["..."],
-  "forbidden_behaviors": ["..."]
+  "forbidden_patterns": ["..."]
 }
 ```
 
-## How gc-bench uses this
+## Validation
 
-`gc-bench` (`../gc-bench`) reads `data/*.jsonl` directly to drive benchmark runs. Both repos must be siblings for local dev paths to resolve.
+```bash
+python3 scripts/validate.py
+```
 
-## Adding eval cases
+Checks:
 
-1. Add records to the appropriate `data/*.jsonl` file (one JSON object per line).
-2. Update `data/all.jsonl` (rerun the merge script or append manually).
-3. Commit with a message describing what scenario is covered and why it was added.
+- split counts: 40/22/47/9
+- required fields and duplicate IDs
+- `data/all.jsonl` exactly equals canonical split concatenation
+- `data/instruments.json` contains only `sdoh6`, `ema3`, `sdoh30`
+- stale `data/benefits-programs.jsonl` has not been reintroduced
 
-## No package.json / pyproject.toml
+## Relationship to other repos
 
-This repo is intentionally dependency-free. The `node_modules/` present is only for the `scripts/convert-yaml-to-jsonl.ts` utility (yaml parser). It is not a deployable package.
+- `../gc-bench` consumes/evolves benchmark scenarios and scoring harnesses.
+- `../gc-sms/packages/evals` may hold private/source Promptfoo YAMLs for internal evaluation.
+- `../gc-benefits` owns benefits data; do not add benefits records here.
+- `../gc-tools` owns the public TypeScript implementation for the SDOH instruments and scoring.
+
+## Updating eval cases
+
+1. Edit the appropriate split file in `data/*.jsonl`.
+2. Update `data/all.jsonl` to match the canonical split order.
+3. Run `python3 scripts/validate.py`.
+4. Commit with a message describing what scenario is covered and why it was added.
+
+## Notes
+
+- Keep this repo dependency-free unless there is a strong reason not to.
+- `scripts/convert-yaml-to-jsonl.ts` is optional and expects `GIVECARE_EVALS_DIR` or sibling `../gc-sms/packages/evals/src/datasets`.
+- Keep scenarios anonymized and SMS-length; the value is in curation and rubrics, not raw source text.

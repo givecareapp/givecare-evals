@@ -4,14 +4,14 @@
  *
  * Usage: npx tsx scripts/convert-yaml-to-jsonl.ts
  *
- * Reads from the givecare monorepo evals package, outputs to data/.
+ * Reads from a sibling gc-sms evals package, outputs to data/.
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve, join } from 'node:path'
 import { parse } from 'yaml'
 
-const EVALS_DIR = resolve(__dirname, '../../../givecare/packages/evals/src/datasets')
+const EVALS_DIR = resolve(process.env.GIVECARE_EVALS_DIR || join(__dirname, '../../gc-sms/packages/evals/src/datasets'))
 const OUT_DIR = resolve(__dirname, '../data')
 
 interface PromptfooTest {

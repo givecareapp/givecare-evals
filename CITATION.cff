@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use GiveCare Evals, please cite it."
+title: "GiveCare Evals"
+type: dataset
+authors:
+  - family-names: Madad
+    given-names: Ali
+year: 2026
+license: CC-BY-4.0
+repository-code: "https://github.com/givecareapp/givecare-evals"
+url: "https://huggingface.co/datasets/givecare/givecare-evals"
+abstract: "Public evaluation dataset for caregiver-support AI systems, including safety, red-team, realistic caregiver, multi-turn, and caregiver SDOH assessment cases."

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate caregiver-evals JSON/JSONL artifacts.
+"""Validate givecare-evals JSON/JSONL artifacts.
 
 The repo is intentionally dependency-free; this script uses only stdlib Python.
 """
@@ -110,7 +110,7 @@ def validate_instruments() -> None:
 
 def main() -> None:
     if (DATA / "benefits-programs.jsonl").exists():
-        fail("data/benefits-programs.jsonl should not live in caregiver-evals; use gc-benefits")
+        fail("data/benefits-programs.jsonl should not live in givecare-evals; use gc-benefits")
 
     ids: set[str] = set()
     merged: list[dict[str, Any]] = []

@@ -4,14 +4,19 @@
  *
  * Usage: npx tsx scripts/convert-yaml-to-jsonl.ts
  *
- * Reads from a sibling gc-sms evals package, outputs to data/.
+ * Reads from GIVECARE_EVALS_DIR, outputs to data/.
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve, join } from 'node:path'
 import { parse } from 'yaml'
 
-const EVALS_DIR = resolve(process.env.GIVECARE_EVALS_DIR || join(__dirname, '../../gc-sms/packages/evals/src/datasets'))
+const sourceDir = process.env.GIVECARE_EVALS_DIR
+if (!sourceDir) {
+  throw new Error('GIVECARE_EVALS_DIR is required for YAML conversion')
+}
+
+const EVALS_DIR = resolve(sourceDir)
 const OUT_DIR = resolve(__dirname, '../data')
 
 interface PromptfooTest {

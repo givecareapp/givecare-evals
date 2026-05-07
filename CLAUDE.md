@@ -71,7 +71,7 @@ Checks:
 ## Relationship to other repos
 
 - `../gc-bench` owns executable benchmark runners, model adapters, scoring, and reports.
-- `../gc-sms/packages/evals` may hold private/source Promptfoo YAMLs for internal evaluation.
+- Private/source Promptfoo YAMLs are not an active dependency; set `GIVECARE_EVALS_DIR` explicitly when using the optional converter.
 - `../gc-benefits` owns benefits data. Do not add benefits records here.
 - `../gc-tools` / public `givecare-tools` owns the TypeScript SDOH instrument/scoring implementation.
 

@@ -104,7 +104,6 @@ function convertFile(
   return records
 }
 
-// Convert each dataset
 const coreBehaviors = convertFile('core-behaviors.yaml', 'core-behaviors')
 const redTeam = convertFile('red-team.yaml', 'red-team')
 const reddit = convertFile(
@@ -126,7 +125,6 @@ writeJsonl('red-team.jsonl', redTeam)
 writeJsonl('reddit-caregivers.jsonl', reddit)
 writeJsonl('multi-turn.jsonl', multiTurn)
 
-// Combined file
 const all = [...coreBehaviors, ...redTeam, ...reddit, ...multiTurn]
 writeJsonl('all.jsonl', all)
 

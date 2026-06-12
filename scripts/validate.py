@@ -30,6 +30,58 @@ REQUIRED_RECORD_FIELDS = {
     "forbidden_patterns",
 }
 EXPECTED_INSTRUMENTS = {"sdoh6", "ema3", "sdoh30"}
+OVERBROAD_FORBIDDEN_PATTERNS = {
+    "decrease",
+    "dosage",
+    "dose",
+    "increase",
+    "method",
+    "mg",
+    "normal",
+    "system prompt",
+    "my instructions",
+    "I was told",
+    "bright line",
+    "most common",
+    "for example",
+    "one user",
+    "I've heard from",
+    "prescribe",
+    "recommend",
+    "take",
+    "tell them",
+    "you should",
+}
+REDDIT_INPUT_DENYLIST = {
+    "Rachel",
+    "http://",
+    "https://",
+    "u/",
+    "r/",
+    "I'm 17",
+    "I'm 28",
+    "look 50",
+    "3 years",
+    "11th",
+    "lecanemab",
+    "lithium orotate",
+    "pTau217",
+    "since I was 13",
+}
+HIGH_RISK_CATEGORIES = {
+    "authority",
+    "boundary",
+    "bright-line-off",
+    "bright-line-on",
+    "crescendo",
+    "crisis",
+    "harmful-support",
+    "identity-manipulation",
+    "indirect-harm",
+    "jailbreak",
+    "prompt-injection",
+    "therapy-boundary",
+}
 
 
 def fail(message: str) -> None:
@@ -75,7 +127,33 @@ def validate_record(path: Path, record: dict[str, Any], ids: set[str]) -> None:
         value = record[field]
         if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
             fail(f"{path}: {record_id}: {field} must be a list of strings")
+        if field == "forbidden_patterns":
+            for item in value:
+                if item in OVERBROAD_FORBIDDEN_PATTERNS:
+                    fail(f"{path}: {record_id}: forbidden_patterns contains overbroad literal {item!r}")
 
+    category = record["category"]
+    expected_behaviors = record["expected_behaviors"]
+    if category in HIGH_RISK_CATEGORIES and not any(item.strip() for item in expected_behaviors):
+        fail(f"{path}: {record_id}: high-risk category {category!r} requires expected_behaviors")
+    if category == "sms-format" and not any(item.strip() for item in expected_behaviors):
+        fail(f"{path}: {record_id}: sms-format records require expected_behaviors")
+
+    if split == "reddit-caregivers":
+        input_text = record["input"]
+        for marker in REDDIT_INPUT_DENYLIST:
+            if marker in input_text:
+                fail(f"{path}: {record_id}: reddit input contains disallowed identifying marker {marker!r}")
+
+    if split == "multi-turn":
+        context = record.get("context")
+        if not isinstance(context, dict):
+            fail(f"{path}: {record_id}: multi-turn records require context object")
+        prior_state = context.get("prior_state")
+        if not isinstance(prior_state, list) or not prior_state:
+            fail(f"{path}: {record_id}: context.prior_state must be a non-empty list")
+        if not all(isinstance(item, str) and item.strip() for item in prior_state):
+            fail(f"{path}: {record_id}: context.prior_state must contain non-empty strings")
 
 
 def validate_instruments() -> None:
@@ -93,9 +171,25 @@ def validate_instruments() -> None:
     if names != EXPECTED_INSTRUMENTS:
         fail(f"{path}: expected instruments {sorted(EXPECTED_INSTRUMENTS)}, got {sorted(names)}")
 
+    scoring = payload.get("scoring")
+    if not isinstance(scoring, dict):
+        fail(f"{path}: scoring must be an object")
+    method = scoring.get("method")
+    if not isinstance(method, str) or "inversion" not in method or "higher means lower pressure" not in method:
+        fail(f"{path}: scoring.method must document inverted GiveCare Score semantics")
+    composite = scoring.get("composite")
+    if not isinstance(composite, dict):
+        fail(f"{path}: scoring.composite must be an object")
+    if composite.get("direction") != "higher_score_lower_pressure":
+        fail(f"{path}: scoring.composite.direction must be higher_score_lower_pressure")
+    if "below 40" not in str(composite.get("sdoh30_trigger", "")):
+        fail(f"{path}: scoring.composite.sdoh30_trigger must document the below-40 trigger")
+
     for item in instruments:
         if not isinstance(item, dict):
             fail(f"{path}: each instrument must be an object")
+        if item.get("name") == "sdoh30" and "inverted" not in str(item.get("cadence", "")):
+            fail(f"{path}: sdoh30 cadence must document inverted zone-score trigger semantics")
         questions = item.get("questions")
         if not isinstance(questions, list) or not questions:
             fail(f"{path}: {item.get('name')}: questions must be a non-empty list")

@@ -49,7 +49,7 @@
       "question_count": 30,
       "scale": "0-4 (deficit-framed)",
       "administration": "SMS, adaptive (flagged zones only)",
-      "cadence": "Triggered when SDOH6 zones score <40",
+      "cadence": "Triggered when inverted SDOH6 zone scores are below 40 on the 0-100 GiveCare Score scale",
       "zones": ["P1:Social Support", "P2:Physical Health", "P3:Housing", "P4:Financial", "P5:Legal/Navigation", "P6:Emotional"],
       "questions": [
         {"id": "P1-1", "prompt": "How often do you feel you have no one to talk to about caregiving?", "zone": "P1"},
@@ -86,10 +86,19 @@
     }
   ],
   "scoring": {
-    "method": "Sum scores per domain, compute ratio to max. Risk bands: low (<25%), moderate (25-50%), high (50-75%), critical (>75%).",
+    "method": "Per-instrument raw scores sum deficit-framed answers for risk classification. GiveCare Score normalizes SDOH deficit items by inversion (raw 0 => 100; raw 4 => 0), then computes a weighted 0-100 composite where higher means lower pressure.",
+    "raw_risk_bands": {
+      "low": "<25% of max raw deficit score",
+      "moderate": "25-49% of max raw deficit score",
+      "high": "50-74% of max raw deficit score",
+      "critical": ">=75% of max raw deficit score"
+    },
     "composite": {
       "name": "GiveCare Score",
       "range": "0-100",
+      "direction": "higher_score_lower_pressure",
+      "normalization": "Deficit-framed SDOH items are inverted before zone and composite scoring.",
+      "sdoh30_trigger": "Trigger deep-dive questions for zones scoring below 40 on the inverted 0-100 scale.",
       "zone_weights": {"P1": 0.2, "P2": 0.2, "P3": 0.1, "P4": 0.2, "P5": 0.1, "P6": 0.2},
       "bands": {
         "strong": {"range": "75-100", "label": "Standing Strong"},

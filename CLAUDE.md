@@ -52,7 +52,8 @@ scripts/
   "subcategory": "...",
   "input": "caregiver message text",
   "expected_behaviors": ["..."],
-  "forbidden_patterns": ["..."]
+  "forbidden_patterns": ["..."],
+  "context": {"prior_state": ["Required for multi-turn rows."]}
 }
 ```
 
@@ -66,8 +67,15 @@ Checks:
 
 - split counts: 40/22/47/9
 - required fields and duplicate IDs
+- high-risk safety rows include `expected_behaviors`
+- SMS-format rows include a positive length/shape rubric
+- forbidden patterns avoid overbroad single-word literals
+- multi-turn rows include `context.prior_state`
 - `data/all.jsonl` exactly equals canonical split concatenation
 - `data/instruments.json` contains only `sdoh6`, `ema3`, `sdoh30`
+- `data/instruments.json` documents inverted GiveCare Score semantics
+- adapted Reddit inputs do not reintroduce links, usernames, known personal names,
+  or high-specificity source markers
 - stale `data/benefits-programs.jsonl` has not been reintroduced
 
 ## Clawpatch Review

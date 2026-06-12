@@ -30,6 +30,7 @@ Each JSONL record must include:
 - `input`
 - `expected_behaviors`
 - `forbidden_patterns`
+- `context.prior_state` for `multi-turn` records
 
 `data/all.jsonl` must equal this exact split order:
 

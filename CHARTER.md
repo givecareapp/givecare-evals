@@ -1,7 +1,7 @@
 # givecare-evals Charter
 
 This charter is an evaluation document, not an operating manual. For the shared
-GiveCare North Star, see `~/agents/wiki/givecare-system.md`.
+GiveCare North Star, see `~/agents/wiki/givecare/givecare-system.md`.
 
 ## Purpose
 
@@ -94,4 +94,4 @@ traces.
 - `scripts/validate.py`
 - `../gc-bench/CHARTER.md`
 - `../givecare-tools/CHARTER.md`
-- `~/agents/wiki/givecare-system.md`
+- `~/agents/wiki/givecare/givecare-system.md`

@@ -39,7 +39,7 @@ traces.
   belong in `../gc-sms`.
 - Benefits program records. Those belong in `../gc-benefits`.
 - TypeScript scoring implementation and SDK packaging. Those belong in
-  `../givecare-tools`.
+  `../gc-tools`.
 - Copyrighted or restricted instruments unless redistribution rights are clear.
 
 ## Inputs
@@ -93,5 +93,5 @@ traces.
 - `CLAUDE.md`
 - `scripts/validate.py`
 - `../gc-bench/CHARTER.md`
-- `../givecare-tools/CHARTER.md`
+- `../gc-tools/CHARTER.md`
 - `~/agents/wiki/givecare/givecare-system.md`

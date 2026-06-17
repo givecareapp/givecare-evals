@@ -91,6 +91,7 @@ dataset.
 - `../gc-bench` owns executable benchmark runners, model adapters, scoring, and reports.
 - Private/source Promptfoo YAMLs are not an active dependency; set `GIVECARE_EVALS_DIR` explicitly when using the optional converter.
 - `../gc-benefits` owns benefits data. Do not add benefits records here.
+- `../gc-sms` owns live SMS runtime behavior and emits the gc-evals sidecar artifacts; repair stale sidecars from the runtime owner, not by adding private traces here.
 - `../gc-tools` / public `givecare-tools` owns the TypeScript SDOH instrument/scoring implementation.
 
 ## Updating eval cases

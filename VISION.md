@@ -50,14 +50,14 @@ where redistribution rights are clear. Benefits data does not belong here.
 validation, the public instrument records, and anonymization discipline. It does
 not own executable runners/verifiers/scoring (that is `../gc-bench`), live SMS
 behavior (`../gc-sms`), benefits records (`../gc-benefits`), or TypeScript
-scoring implementation (`../givecare-tools`). Full ownership matrix is in
+scoring implementation (`../gc-tools`). Full ownership matrix is in
 `CHARTER.md`.
 
 ## Source Of Truth
 
 - Public eval cases and instrument records are canonical here.
 - Executable benchmark behavior is canonical in `../gc-bench`.
-- Scoring implementation is canonical in `../givecare-tools`.
+- Scoring implementation is canonical in `../gc-tools`.
 - Private runtime behavior is canonical in `../gc-sms`.
 
 ## Evaluation Loop

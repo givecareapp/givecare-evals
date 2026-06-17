@@ -9,6 +9,8 @@ not frame.
 
 - Keep `.clawpatch/` local. Do not commit generated maps, findings, reports, or
   patch attempts.
+- Treat `clawpatch status --json` as the current status source. Rendered
+  `.clawpatch/reports/*.md` files are local snapshots only.
 - Review first. Do not run `clawpatch fix` until a human has triaged the
   finding and picked a scope.
 - Do not add private prompts, traces, memory records, usernames, links, or raw

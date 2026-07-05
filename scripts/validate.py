@@ -201,6 +201,78 @@ def validate_instruments() -> None:
                     fail(f"{path}: {item.get('name')}: question missing {field}")
 
 
+def _project_shared_instruments(payload: dict[str, Any]) -> dict[str, Any]:
+    """Extract the SHARED instrument fields that gc-tools owns: per-instrument
+    ordered (id, prompt, zone?) questions plus composite zone weights. Packaging
+    fields this repo owns for distribution (titles, descriptions, cadence,
+    license notes, band labels, prose scoring narrative) are intentionally left
+    out of parity."""
+    instruments: dict[str, list[dict[str, str]]] = {}
+    for item in payload.get("instruments", []):
+        questions = []
+        for q in item.get("questions", []):
+            entry = {"id": q.get("id"), "prompt": q.get("prompt")}
+            if "zone" in q:
+                entry["zone"] = q["zone"]
+            questions.append(entry)
+        instruments[item.get("name")] = questions
+    zone_weights = payload.get("scoring", {}).get("composite", {}).get("zone_weights", {})
+    return {"instruments": instruments, "zoneWeights": zone_weights}
+
+
+def _report_parity_diff(expected: dict[str, Any], actual: dict[str, Any]) -> None:
+    exp_i, act_i = expected["instruments"], actual["instruments"]
+    for name in sorted(set(exp_i) | set(act_i)):
+        want, got = exp_i.get(name), act_i.get(name)
+        if want == got:
+            continue
+        if want is None or got is None:
+            print(
+                f"  instrument {name!r}: gc-tools={'present' if want else 'absent'} "
+                f"evals={'present' if got else 'absent'}",
+                file=sys.stderr,
+            )
+            continue
+        for idx in range(max(len(want), len(got))):
+            w = want[idx] if idx < len(want) else None
+            g = got[idx] if idx < len(got) else None
+            if w != g:
+                print(f"  {name} q[{idx}]: gc-tools={w} evals={g}", file=sys.stderr)
+    if expected["zoneWeights"] != actual["zoneWeights"]:
+        print(
+            f"  zoneWeights: gc-tools={expected['zoneWeights']} "
+            f"evals={actual['zoneWeights']}",
+            file=sys.stderr,
+        )
+
+
+def check_instrument_parity() -> None:
+    """Gate data/instruments.json's SHARED instrument fields against the canonical
+    gc-tools export. gc-tools owns the SDOH instrument definition; this repo
+    distributes it. Compare when the sibling export exists; skip with a notice
+    when absent (mirrors gc-sms `check-web-contracts`). This repo stays
+    dependency-free — plain JSON comparison, no gc-tools import."""
+    export_path = ROOT.parent / "gc-tools" / "data" / "instruments-export.json"
+    if not export_path.exists():
+        print("note: gc-tools sibling export not found; skipping instrument parity check")
+        return
+
+    try:
+        export = json.loads(export_path.read_text())
+    except json.JSONDecodeError as exc:
+        fail(f"{export_path}: invalid JSON: {exc}")
+
+    payload = json.loads((DATA / "instruments.json").read_text())
+    expected = {"instruments": export["instruments"], "zoneWeights": export["zoneWeights"]}
+    actual = _project_shared_instruments(payload)
+    if actual != expected:
+        _report_parity_diff(expected, actual)
+        fail(
+            "data/instruments.json shared fields diverge from the canonical gc-tools "
+            "export (gc-tools owns the definition; align this file to it)"
+        )
+    print("ok: instrument parity with gc-tools export")
+
 
 def main() -> None:
     if (DATA / "benefits-programs.jsonl").exists():
@@ -224,6 +296,7 @@ def main() -> None:
         fail("data/all.jsonl must exactly equal split files concatenated in canonical order")
 
     validate_instruments()
+    check_instrument_parity()
     print(f"ok: {len(all_records)} eval records, {len(EXPECTED_INSTRUMENTS)} instruments")
 
 

@@ -88,7 +88,13 @@ so higher composite and zone scores mean lower pressure.
 | `ema3` | 3 | Lightweight check-in for stress, mood, and coping |
 | `sdoh30` | 30 | Adaptive deep dive, five questions per pressure zone |
 
-The implementation lives in [`@givecare/tools`](https://github.com/givecareapp/givecare-tools).
+The instrument **definition** (question ids, prompts, zones, scale, and zone
+weights) is owned by [`@givecare/tools`](https://github.com/givecareapp/givecare-tools).
+The records here are a distribution copy: `scripts/validate.py` parity-checks their
+shared fields against the canonical `../gc-tools/data/instruments-export.json` when
+that sibling is present, so this file cannot silently drift from the definition.
+The packaging fields this repo adds for distribution — titles, descriptions,
+cadence, license notes, and band labels — are owned here.
 
 ### Zone model
 
@@ -139,7 +145,7 @@ No package install is required.
 python3 scripts/validate.py
 ```
 
-The validator checks JSONL parseability, split counts, required fields, duplicate IDs, `all.jsonl` consistency, instrument shape and scoring semantics, high-risk and SMS-format rows with empty `expected_behaviors`, overbroad forbidden patterns, multi-turn context, adapted-scenario identifying and high-specificity markers, and that stale benefits-program data has not been reintroduced.
+The validator checks JSONL parseability, split counts, required fields, duplicate IDs, `all.jsonl` consistency, instrument shape and scoring semantics, instrument parity against the canonical `../gc-tools` export (skipped with a notice when the sibling is absent), high-risk and SMS-format rows with empty `expected_behaviors`, overbroad forbidden patterns, multi-turn context, adapted-scenario identifying and high-specificity markers, and that stale benefits-program data has not been reintroduced.
 
 ## Limitations
 

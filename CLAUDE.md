@@ -74,6 +74,8 @@ Checks:
 - `data/all.jsonl` exactly equals canonical split concatenation
 - `data/instruments.json` contains only `sdoh6`, `ema3`, `sdoh30`
 - `data/instruments.json` documents inverted GiveCare Score semantics
+- `data/instruments.json` SHARED fields (question ids/prompts/zones + zone weights)
+  match the canonical `../gc-tools/data/instruments-export.json` (skips when absent)
 - adapted Reddit inputs do not reintroduce links, usernames, known personal names,
   or high-specificity source markers
 - stale `data/benefits-programs.jsonl` has not been reintroduced
@@ -92,7 +94,7 @@ dataset.
 - Private/source Promptfoo YAMLs are not an active dependency; set `GIVECARE_EVALS_DIR` explicitly when using the optional converter.
 - `../gc-benefits` owns benefits data. Do not add benefits records here.
 - `../gc-sms` owns live SMS runtime behavior and emits the gc-evals sidecar artifacts; repair stale sidecars from the runtime owner, not by adding private traces here.
-- `../gc-tools` / public `givecare-tools` owns the TypeScript SDOH instrument/scoring implementation.
+- `../gc-tools` / public `givecare-tools` owns the SDOH instrument **definition** and its TypeScript scoring implementation. This repo distributes an instrument copy that `scripts/validate.py` parity-checks against the gc-tools export (`../gc-tools/data/instruments-export.json`); regenerate from gc-tools rather than editing shared fields here.
 
 ## Updating eval cases
 

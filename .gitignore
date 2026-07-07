@@ -1,5 +1,4 @@
 node_modules/
-.clawpatch/
 .claude/
 .codex/
 .ruff_cache/

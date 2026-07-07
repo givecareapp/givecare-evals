@@ -80,14 +80,6 @@ Checks:
   or high-specificity source markers
 - stale `data/benefits-programs.jsonl` has not been reintroduced
 
-## Clawpatch Review
-
-Use `docs/clawpatch-watchlist.md` for public-dataset review passes. The repo
-config is `clawpatch.config.json`; generated `.clawpatch/` state stays local and
-ignored. Do not use Clawpatch as an automatic fixer, and keep private traces,
-raw public-post text, usernames, links, and identifying details out of the
-dataset.
-
 ## Relationship to other repos
 
 - `../gc-bench` owns executable benchmark runners, model adapters, scoring, and reports.

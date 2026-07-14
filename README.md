@@ -165,7 +165,7 @@ See [ROADMAP.md](./ROADMAP.md) for the current gap list.
   author={Madad, Ali},
   year={2026},
   publisher={Hugging Face},
-  url={https://huggingface.co/datasets/givecare/givecare-evals}
+  url={https://huggingface.co/datasets/givecare/caregiver-evals}
 }
 ```
 

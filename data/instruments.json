@@ -1,41 +1,41 @@
 {
   "meta": {
     "description": "SMS-administered caregiver assessment instruments used by GiveCare",
-    "version": "v1",
+    "version": "v2",
     "license_notes": {
-      "sdoh6": "Original instrument by GiveCare. CC-BY-4.0.",
+      "gc_sdoh6": "Original instrument by GiveCare. CC-BY-4.0.",
       "ema3": "Original instrument by GiveCare. CC-BY-4.0.",
-      "sdoh30": "Original instrument by GiveCare. Informed by PRAPARE/AHC-HRSN methodology. CC-BY-4.0.",
+      "gc_sdoh30": "Original instrument by GiveCare. Informed by PRAPARE/AHC-HRSN methodology. CC-BY-4.0.",
       "cwbs14": "EXCLUDED. Caregiver Well-Being Scale (c) 1999 Susan Tebb, Marla Berg-Weger, Doris M. Rubio, revised 2012. Used with permission in GiveCare product. Redistribution rights not confirmed — contact original authors for licensing."
     }
   },
   "instruments": [
     {
-      "name": "sdoh6",
-      "title": "SDOH Six-Domain Snapshot",
-      "description": "Quick 6-question baseline assessment covering social determinants of health for caregivers. One question per zone, deficit-framed (0=none, 4=extreme).",
+      "name": "gc_sdoh6",
+      "title": "GC-SDOH-6",
+      "description": "Quick 6-question baseline assessment covering social determinants of health for caregivers. One question per domain, deficit-framed (0=none, 4=extreme).",
       "question_count": 6,
       "scale": "0-4 (deficit-framed)",
       "administration": "SMS, single session",
-      "cadence": "Baseline + 14-30 day follow-up",
-      "zones": ["P1:Social Support", "P2:Physical Health", "P3:Housing", "P4:Financial", "P5:Legal/Navigation", "P6:Emotional"],
+      "cadence": "Baseline, then about every 30 days",
+      "gcDomains": ["GC1:Social Support", "GC2:Physical Health", "GC3:Housing & Environment", "GC4:Financial Resources", "GC5:Navigation", "GC6:Emotional Wellbeing"],
       "questions": [
-        {"id": "financial", "prompt": "How much financial strain is caregiving causing?", "domain": "financial", "zone": "P4"},
-        {"id": "social", "prompt": "How often do you feel alone in caregiving?", "domain": "social", "zone": "P1"},
-        {"id": "health", "prompt": "How much has your own health worsened?", "domain": "health", "zone": "P2"},
-        {"id": "housing", "prompt": "How unstable does your home situation feel?", "domain": "housing", "zone": "P3"},
-        {"id": "navigation", "prompt": "How hard is it to navigate care systems right now?", "domain": "navigation", "zone": "P5"},
-        {"id": "burnout", "prompt": "How overwhelmed do you feel today?", "domain": "burnout", "zone": "P6"}
+        {"id": "financial", "prompt": "How much financial strain is caregiving causing?", "domain": "financial", "gcDomain": "GC4"},
+        {"id": "social", "prompt": "How often do you feel alone in caregiving?", "domain": "social", "gcDomain": "GC1"},
+        {"id": "health", "prompt": "How much has your own health worsened?", "domain": "health", "gcDomain": "GC2"},
+        {"id": "housing", "prompt": "How unstable does your home situation feel?", "domain": "housing", "gcDomain": "GC3"},
+        {"id": "navigation", "prompt": "How hard is it to navigate care systems right now?", "domain": "navigation", "gcDomain": "GC5"},
+        {"id": "burnout", "prompt": "How overwhelmed do you feel today?", "domain": "burnout", "gcDomain": "GC6"}
       ]
     },
     {
       "name": "ema3",
-      "title": "Daily Wellbeing Micro-Check (EMA-3)",
-      "description": "3-item ecological momentary assessment for daily caregiver wellbeing tracking via SMS.",
+      "title": "EMA-3 Reading",
+      "description": "3-item ecological momentary assessment reported separately from the structural GiveCare Score.",
       "question_count": 3,
       "scale": "0-4",
       "administration": "SMS, weekly",
-      "cadence": "Weekly during active support",
+      "cadence": "Twice weekly initially, then weekly; daily only for an explicit short burst",
       "questions": [
         {"id": "stress", "prompt": "How stressed do you feel right now? (0=none, 4=extreme)", "domain": "stress"},
         {"id": "mood", "prompt": "How would you rate your mood right now? (0=very low, 4=great)", "domain": "mood"},
@@ -43,50 +43,50 @@
       ]
     },
     {
-      "name": "sdoh30",
-      "title": "Adaptive Deep-Dive Social Determinants (SDOH-30)",
-      "description": "30-item deep-dive instrument aligned to P1-P6 zones (5 questions per zone). Administered selectively per flagged zone, not as a full battery. Informed by PRAPARE/AHC-HRSN methodology.",
+      "name": "gc_sdoh30",
+      "title": "GC-SDOH-30",
+      "description": "30-item deep-dive instrument aligned to GC1-GC6 domains (5 questions per domain). Administered selectively per flagged domain, not as a full battery. Informed by PRAPARE/AHC-HRSN methodology.",
       "question_count": 30,
       "scale": "0-4 (deficit-framed)",
-      "administration": "SMS, adaptive (flagged zones only)",
-      "cadence": "Triggered when inverted SDOH6 zone scores are below 40 on the 0-100 GiveCare Score scale",
-      "zones": ["P1:Social Support", "P2:Physical Health", "P3:Housing", "P4:Financial", "P5:Legal/Navigation", "P6:Emotional"],
+      "administration": "SMS, adaptive (flagged domains only)",
+      "cadence": "Triggered when inverted GC-SDOH-6 domain scores are below 40 on the 0-100 GiveCare Score scale",
+      "gcDomains": ["GC1:Social Support", "GC2:Physical Health", "GC3:Housing & Environment", "GC4:Financial Resources", "GC5:Navigation", "GC6:Emotional Wellbeing"],
       "questions": [
-        {"id": "P1-1", "prompt": "How often do you feel you have no one to talk to about caregiving?", "zone": "P1"},
-        {"id": "P1-2", "prompt": "How hard is it to find someone to step in when you need a break?", "zone": "P1"},
-        {"id": "P1-3", "prompt": "How often do you feel isolated because of your caregiving role?", "zone": "P1"},
-        {"id": "P1-4", "prompt": "How difficult is it to ask family or friends for help?", "zone": "P1"},
-        {"id": "P1-5", "prompt": "How often do you feel you handle everything alone?", "zone": "P1"},
-        {"id": "P2-1", "prompt": "How much has caregiving worsened your physical health?", "zone": "P2"},
-        {"id": "P2-2", "prompt": "How often are you too exhausted to take care of yourself?", "zone": "P2"},
-        {"id": "P2-3", "prompt": "How hard is it to get enough sleep because of caregiving?", "zone": "P2"},
-        {"id": "P2-4", "prompt": "How often do you skip your own medical appointments?", "zone": "P2"},
-        {"id": "P2-5", "prompt": "How much does caregiving interfere with eating well or exercising?", "zone": "P2"},
-        {"id": "P3-1", "prompt": "How unstable does your living situation feel right now?", "zone": "P3"},
-        {"id": "P3-2", "prompt": "How hard is it to keep up with home repairs or maintenance?", "zone": "P3"},
-        {"id": "P3-3", "prompt": "How often do safety or accessibility issues at home affect caregiving?", "zone": "P3"},
-        {"id": "P3-4", "prompt": "How difficult is it to get reliable transportation for care needs?", "zone": "P3"},
-        {"id": "P3-5", "prompt": "How much does your neighborhood lack services you need?", "zone": "P3"},
-        {"id": "P4-1", "prompt": "How much financial strain is caregiving causing you?", "zone": "P4"},
-        {"id": "P4-2", "prompt": "How often do costs prevent you from getting needed care help?", "zone": "P4"},
-        {"id": "P4-3", "prompt": "How hard is it to find affordable caregiving support?", "zone": "P4"},
-        {"id": "P4-4", "prompt": "How much has caregiving reduced your income or work hours?", "zone": "P4"},
-        {"id": "P4-5", "prompt": "How worried are you about long-term financial security?", "zone": "P4"},
-        {"id": "P5-1", "prompt": "How hard is it to understand or navigate care system options?", "zone": "P5"},
-        {"id": "P5-2", "prompt": "How often do confusing rules or paperwork slow you down?", "zone": "P5"},
-        {"id": "P5-3", "prompt": "How difficult is it to find trustworthy information about benefits?", "zone": "P5"},
-        {"id": "P5-4", "prompt": "How hard is it to deal with legal, insurance, or government forms?", "zone": "P5"},
-        {"id": "P5-5", "prompt": "How often do you feel lost trying to coordinate between providers?", "zone": "P5"},
-        {"id": "P6-1", "prompt": "How overwhelmed do you feel by your caregiving responsibilities?", "zone": "P6"},
-        {"id": "P6-2", "prompt": "How often do you feel anxious or worried about the future?", "zone": "P6"},
-        {"id": "P6-3", "prompt": "How hard is it to find time for things that bring you joy?", "zone": "P6"},
-        {"id": "P6-4", "prompt": "How often do you feel guilty about how you handle caregiving?", "zone": "P6"},
-        {"id": "P6-5", "prompt": "How much has caregiving affected your sense of who you are?", "zone": "P6"}
+        {"id": "GC1-1", "prompt": "How often do you feel you have no one to talk to about caregiving?", "gcDomain": "GC1"},
+        {"id": "GC1-2", "prompt": "How hard is it to find someone to step in when you need a break?", "gcDomain": "GC1"},
+        {"id": "GC1-3", "prompt": "How often do you feel isolated because of your caregiving role?", "gcDomain": "GC1"},
+        {"id": "GC1-4", "prompt": "How difficult is it to ask family or friends for help?", "gcDomain": "GC1"},
+        {"id": "GC1-5", "prompt": "How often do you feel you handle everything alone?", "gcDomain": "GC1"},
+        {"id": "GC2-1", "prompt": "How much has caregiving worsened your physical health?", "gcDomain": "GC2"},
+        {"id": "GC2-2", "prompt": "How often are you too exhausted to take care of yourself?", "gcDomain": "GC2"},
+        {"id": "GC2-3", "prompt": "How hard is it to get enough sleep because of caregiving?", "gcDomain": "GC2"},
+        {"id": "GC2-4", "prompt": "How often do you skip your own medical appointments?", "gcDomain": "GC2"},
+        {"id": "GC2-5", "prompt": "How much does caregiving interfere with eating well or exercising?", "gcDomain": "GC2"},
+        {"id": "GC3-1", "prompt": "How unstable does your living situation feel right now?", "gcDomain": "GC3"},
+        {"id": "GC3-2", "prompt": "How hard is it to keep up with home repairs or maintenance?", "gcDomain": "GC3"},
+        {"id": "GC3-3", "prompt": "How often do safety or accessibility issues at home affect caregiving?", "gcDomain": "GC3"},
+        {"id": "GC3-4", "prompt": "How difficult is it to get reliable transportation for care needs?", "gcDomain": "GC3"},
+        {"id": "GC3-5", "prompt": "How much does your neighborhood lack services you need?", "gcDomain": "GC3"},
+        {"id": "GC4-1", "prompt": "How much financial strain is caregiving causing you?", "gcDomain": "GC4"},
+        {"id": "GC4-2", "prompt": "How often do costs prevent you from getting needed care help?", "gcDomain": "GC4"},
+        {"id": "GC4-3", "prompt": "How hard is it to find affordable caregiving support?", "gcDomain": "GC4"},
+        {"id": "GC4-4", "prompt": "How much has caregiving reduced your income or work hours?", "gcDomain": "GC4"},
+        {"id": "GC4-5", "prompt": "How worried are you about long-term financial security?", "gcDomain": "GC4"},
+        {"id": "GC5-1", "prompt": "How hard is it to understand or navigate care system options?", "gcDomain": "GC5"},
+        {"id": "GC5-2", "prompt": "How often do confusing rules or paperwork slow you down?", "gcDomain": "GC5"},
+        {"id": "GC5-3", "prompt": "How difficult is it to find trustworthy information about benefits?", "gcDomain": "GC5"},
+        {"id": "GC5-4", "prompt": "How hard is it to deal with legal, insurance, or government forms?", "gcDomain": "GC5"},
+        {"id": "GC5-5", "prompt": "How often do you feel lost trying to coordinate between providers?", "gcDomain": "GC5"},
+        {"id": "GC6-1", "prompt": "How overwhelmed do you feel by your caregiving responsibilities?", "gcDomain": "GC6"},
+        {"id": "GC6-2", "prompt": "How often do you feel anxious or worried about the future?", "gcDomain": "GC6"},
+        {"id": "GC6-3", "prompt": "How hard is it to find time for things that bring you joy?", "gcDomain": "GC6"},
+        {"id": "GC6-4", "prompt": "How often do you feel guilty about how you handle caregiving?", "gcDomain": "GC6"},
+        {"id": "GC6-5", "prompt": "How much has caregiving affected your sense of who you are?", "gcDomain": "GC6"}
       ]
     }
   ],
   "scoring": {
-    "method": "Per-instrument raw scores sum deficit-framed answers for risk classification. GiveCare Score normalizes SDOH deficit items by inversion (raw 0 => 100; raw 4 => 0), then computes a weighted 0-100 composite where higher means lower pressure.",
+    "method": "GiveCare Score uses GC-SDOH-6 as its structural base and completed GC-SDOH-30 questions to refine matching GC domains. EMA-3 is normalized separately as an EMA-3 reading.",
     "raw_risk_bands": {
       "low": "<25% of max raw deficit score",
       "moderate": "25-49% of max raw deficit score",
@@ -97,9 +97,10 @@
       "name": "GiveCare Score",
       "range": "0-100",
       "direction": "higher_score_lower_pressure",
-      "normalization": "Deficit-framed SDOH items are inverted before zone and composite scoring.",
-      "sdoh30_trigger": "Trigger deep-dive questions for zones scoring below 40 on the inverted 0-100 scale.",
-      "zone_weights": {"P1": 0.2, "P2": 0.2, "P3": 0.1, "P4": 0.2, "P5": 0.1, "P6": 0.2},
+      "normalization": "Deficit-framed SDOH items are inverted before domain and composite scoring; EMA-3 is excluded.",
+      "sdoh30_trigger": "Trigger deep-dive questions for domains scoring below 40 on the inverted 0-100 scale.",
+      "domain_weights": {"GC1": 0.2, "GC2": 0.2, "GC3": 0.1, "GC4": 0.2, "GC5": 0.1, "GC6": 0.2},
+      "domain_labels": {"GC1": "Social Support", "GC2": "Physical Health", "GC3": "Housing & Environment", "GC4": "Financial Resources", "GC5": "Navigation", "GC6": "Emotional Wellbeing"},
       "bands": {
         "strong": {"range": "75-100", "label": "Standing Strong"},
         "steady": {"range": "50-74", "label": "Holding Steady"},
@@ -107,6 +108,12 @@
         "needs_attention": {"range": "0-24", "label": "Carrying a Lot"}
       },
       "confidence_levels": ["early_estimate", "building", "solid"]
+    },
+    "ema_reading": {
+      "name": "EMA-3 reading",
+      "range": "0-100",
+      "direction": "higher_score_lower_immediate_pressure",
+      "instrument": "ema3"
     }
   }
 }

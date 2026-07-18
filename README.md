@@ -38,7 +38,7 @@ The goal is narrow: help builders test whether an assistant can respond safely t
 | `data/reddit-caregivers.jsonl` | 47 | Realistic caregiver scenarios adapted from public caregiver posts and rewritten into short first-person messages |
 | `data/multi-turn.jsonl` | 9 | Continuity scenarios that assume prior context, memory, or seeded turn state |
 | `data/all.jsonl` | 119 | Canonical concatenation of the four eval splits |
-| `data/instruments.json` | 3 instruments | SDOH-6, EMA-3, and SDOH-30 caregiver assessment instruments |
+| `data/instruments.json` | 3 instruments | GC-SDOH-6, EMA-3, and GC-SDOH-30 caregiver assessment instruments |
 
 ## What is not included
 
@@ -80,15 +80,16 @@ Each eval row is one JSON object per line:
 
 `data/instruments.json` contains public, SMS-administered caregiver SDOH instruments.
 Raw SDOH answers are deficit-framed, but GiveCare Score normalizes by inversion
-so higher composite and zone scores mean lower pressure.
+so higher composite and domain scores mean lower pressure. EMA-3 is reported
+separately as an EMA-3 reading.
 
 | Instrument | Questions | Use |
 |---|---:|---|
-| `sdoh6` | 6 | Baseline screen across six caregiver pressure zones |
-| `ema3` | 3 | Lightweight check-in for stress, mood, and coping |
-| `sdoh30` | 30 | Adaptive deep dive, five questions per pressure zone |
+| `gc_sdoh6` | 6 | GC-SDOH-6 baseline across six caregiver load domains |
+| `ema3` | 3 | Lightweight momentary reading for stress, mood, and coping |
+| `gc_sdoh30` | 30-item bank | GC-SDOH-30 targeted branch, four additional questions in one flagged domain |
 
-The instrument **definition** (question ids, prompts, zones, scale, and zone
+The instrument **definition** (question ids, prompts, GC domains, scale, and domain
 weights) is owned by [`@givecare/tools`](https://github.com/givecareapp/givecare-tools).
 The records here are a distribution copy: `scripts/validate.py` parity-checks their
 shared fields against the canonical `../gc-tools/data/instruments-export.json` when
@@ -96,16 +97,16 @@ that sibling is present, so this file cannot silently drift from the definition.
 The packaging fields this repo adds for distribution — titles, descriptions,
 cadence, license notes, and band labels — are owned here.
 
-### Zone model
+### Caregiver load domains
 
-| Zone | Domain | Weight |
+| Code | Domain | Weight |
 |---|---|---:|
-| P1 | Social Support | 0.20 |
-| P2 | Physical Health | 0.20 |
-| P3 | Housing & Environment | 0.10 |
-| P4 | Financial Resources | 0.20 |
-| P5 | Legal & Navigation | 0.10 |
-| P6 | Emotional Wellbeing | 0.20 |
+| GC1 | Social Support | 0.20 |
+| GC2 | Physical Health | 0.20 |
+| GC3 | Housing & Environment | 0.10 |
+| GC4 | Financial Resources | 0.20 |
+| GC5 | Navigation | 0.10 |
+| GC6 | Emotional Wellbeing | 0.20 |
 
 ## Why these evals exist
 
@@ -149,7 +150,7 @@ The validator checks JSONL parseability, split counts, required fields, duplicat
 
 ## Limitations
 
-- Small dataset: 118 eval cases is enough for smoke and regression tests, not broad model certification.
+- Small dataset: 119 eval cases is enough for smoke and regression tests, not broad model certification.
 - English-only and SMS-first.
 - US-centered caregiving assumptions.
 - Rubrics are natural language, not a full executable judge schema.

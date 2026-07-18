@@ -1,91 +1,36 @@
-# givecare-evals Vision
+# gc-evals Vision
 
-`givecare-evals` is GiveCare's public caregiver AI eval dataset: versioned,
-anonymized, SMS-style evaluation records plus public GiveCare SDOH instruments
-that can be distributed without exposing private runtime data.
+`gc-evals` distributes public, anonymized caregiver AI cases and assessment
+instrument records.
 
-This document is the repo's product and agent decision frame. It explains where
-the dataset is going, what matters now, and which changes are out of bounds. For
-ownership and evaluation contracts, see `CHARTER.md`.
+## Product bet
 
-## The Product Bet
+Small, legible records let outsiders inspect and reuse the behaviors GiveCare
+cares about without private product context. This repo is a dataset, not a
+runner or live service.
 
-`givecare-evals` makes GiveCare's evaluation posture inspectable and reusable. It
-lets external researchers, partners, and standards efforts test caregiver AI
-behavior using the same kinds of cases GiveCare cares about — while keeping the
-dataset public, small, anonymized, legally safe, and clearly separated from
-private production traces.
+## Ownership
 
-It is data distribution, not a benchmark runner and not the product runtime. The
-value is portability: an outsider should be able to understand and reuse a case
-without any private GiveCare context.
+This repo owns public JSONL cases, splits, validation, instrument records, and
+anonymization. `gc-bench` owns executable evaluation; `gc-tools` owns scoring
+code; `gc-sms` owns runtime behavior; `gc-benefits` owns program facts.
 
-## Current Focus
+## Invariants
 
-Priority:
+- No private prompts, traces, conversations, usernames, links, or identifying
+  details.
+- Inputs remain short, SMS-like, and understandable without GiveCare context.
+- Instruments ship only with clear redistribution rights.
+- IDs, fields, split counts, and merged order pass `scripts/validate.py`.
 
-- Public-safe, anonymized, SMS-like cases with no private prompts, traces, or
-  identifying details.
-- Split integrity: validated split counts, unique IDs, required fields, and
-  merged dataset order.
-- Public SDOH-6, EMA-3, and SDOH-30 instrument records with clear redistribution
-  rights.
+## Current focus
 
-Next priorities:
+- Public-safe cases with useful caregiver-behavior coverage.
+- GC-SDOH-6, EMA-3, and GC-SDOH-30 distribution records.
+- Clean candidate flow into `gc-bench` staging.
 
-- Candidate scenario material that flows cleanly into `../gc-bench` staging.
-- Coverage of meaningful caregiver AI behaviors surfaced by `../gc-bench`,
-  `../gc-sms`, and public research.
-- Packaging discipline for GitHub / Hugging Face style distribution.
+## Non-goals
 
-## Public-Safety Rule
-
-No private production prompts, traces, memory records, or user conversations.
-Inputs stay short, anonymized, SMS-like, and public-safe. Instruments ship only
-where redistribution rights are clear. Benefits data does not belong here.
-
-## Repo Boundary
-
-`givecare-evals` owns the public JSONL eval records, split definitions and
-validation, the public instrument records, and anonymization discipline. It does
-not own executable runners/verifiers/scoring (that is `../gc-bench`), live SMS
-behavior (`../gc-sms`), benefits records (`../gc-benefits`), or TypeScript
-scoring implementation (`../gc-tools`). Full ownership matrix is in
-`CHARTER.md`.
-
-## Source Of Truth
-
-- Public eval cases and instrument records are canonical here.
-- Executable benchmark behavior is canonical in `../gc-bench`.
-- Scoring implementation is canonical in `../gc-tools`.
-- Private runtime behavior is canonical in `../gc-sms`.
-
-## Evaluation Loop
-
-Every case should add a caregiver AI behavior signal not better owned elsewhere,
-stay public-safe and anonymized, and preserve dataset format and split integrity.
-Run `python scripts/validate.py` before considering a change done.
-
-## Agent Rules
-
-- Never add raw public-post text, usernames, links, private messages, or
-  identifying details.
-- Never add private traces because they are useful — route those to the safe
-  harvest/review path in `../gc-bench`.
-- Keep this repo a dataset, not a runner or scorer.
-- Do not reintroduce benefits programs or generated source data.
-- Ship instruments only with clear redistribution rights.
-
-## What Not To Build For Now
-
-- A benchmark runner or scorer implementation here.
-- Private-trace ingestion outside the anonymized, reviewed path.
-- Benefits or generated source data.
-- Instruments with uncertain redistribution rights.
-
-## Read Order
-
-- `VISION.md` → dataset direction, priority frame, and agent guardrails.
-- `CHARTER.md` → ownership and evaluation contract.
-- `CLAUDE.md` → dataset structure, splits, and SDOH instruments.
-- `../VISION.md` → ecosystem direction and cross-repo seams.
+- A runner, verifier, or scoring implementation.
+- Private-trace ingestion.
+- Benefits data or generated source corpora.

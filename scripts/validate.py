@@ -29,7 +29,7 @@ REQUIRED_RECORD_FIELDS = {
     "expected_behaviors",
     "forbidden_patterns",
 }
-EXPECTED_INSTRUMENTS = {"sdoh6", "ema3", "sdoh30"}
+EXPECTED_INSTRUMENTS = {"gc_sdoh6", "ema3", "gc_sdoh30"}
 OVERBROAD_FORBIDDEN_PATTERNS = {
     "decrease",
     "dosage",
@@ -175,8 +175,8 @@ def validate_instruments() -> None:
     if not isinstance(scoring, dict):
         fail(f"{path}: scoring must be an object")
     method = scoring.get("method")
-    if not isinstance(method, str) or "inversion" not in method or "higher means lower pressure" not in method:
-        fail(f"{path}: scoring.method must document inverted GiveCare Score semantics")
+    if not isinstance(method, str) or "GC-SDOH-6" not in method or "EMA-3 reading" not in method:
+        fail(f"{path}: scoring.method must distinguish the structural score from the EMA-3 reading")
     composite = scoring.get("composite")
     if not isinstance(composite, dict):
         fail(f"{path}: scoring.composite must be an object")
@@ -184,12 +184,15 @@ def validate_instruments() -> None:
         fail(f"{path}: scoring.composite.direction must be higher_score_lower_pressure")
     if "below 40" not in str(composite.get("sdoh30_trigger", "")):
         fail(f"{path}: scoring.composite.sdoh30_trigger must document the below-40 trigger")
+    ema_reading = scoring.get("ema_reading")
+    if not isinstance(ema_reading, dict) or ema_reading.get("instrument") != "ema3":
+        fail(f"{path}: scoring.ema_reading must identify the EMA-3 reading")
 
     for item in instruments:
         if not isinstance(item, dict):
             fail(f"{path}: each instrument must be an object")
-        if item.get("name") == "sdoh30" and "inverted" not in str(item.get("cadence", "")):
-            fail(f"{path}: sdoh30 cadence must document inverted zone-score trigger semantics")
+        if item.get("name") == "gc_sdoh30" and "below 40" not in str(item.get("cadence", "")):
+            fail(f"{path}: gc_sdoh30 cadence must document the below-40 domain trigger")
         questions = item.get("questions")
         if not isinstance(questions, list) or not questions:
             fail(f"{path}: {item.get('name')}: questions must be a non-empty list")
@@ -203,7 +206,7 @@ def validate_instruments() -> None:
 
 def _project_shared_instruments(payload: dict[str, Any]) -> dict[str, Any]:
     """Extract the SHARED instrument fields that gc-tools owns: per-instrument
-    ordered (id, prompt, zone?) questions plus composite zone weights. Packaging
+    ordered (id, prompt, gcDomain?) questions plus composite domain weights. Packaging
     fields this repo owns for distribution (titles, descriptions, cadence,
     license notes, band labels, prose scoring narrative) are intentionally left
     out of parity."""
@@ -212,15 +215,26 @@ def _project_shared_instruments(payload: dict[str, Any]) -> dict[str, Any]:
         questions = []
         for q in item.get("questions", []):
             entry = {"id": q.get("id"), "prompt": q.get("prompt")}
-            if "zone" in q:
-                entry["zone"] = q["zone"]
+            if "gcDomain" in q:
+                entry["gcDomain"] = q["gcDomain"]
             questions.append(entry)
         instruments[item.get("name")] = questions
-    zone_weights = payload.get("scoring", {}).get("composite", {}).get("zone_weights", {})
-    return {"instruments": instruments, "zoneWeights": zone_weights}
+    domain_weights = payload.get("scoring", {}).get("composite", {}).get("domain_weights", {})
+    domain_labels = payload.get("scoring", {}).get("composite", {}).get("domain_labels", {})
+    return {
+        "version": payload.get("meta", {}).get("version"),
+        "instruments": instruments,
+        "domainWeights": domain_weights,
+        "domainLabels": domain_labels,
+    }
 
 
 def _report_parity_diff(expected: dict[str, Any], actual: dict[str, Any]) -> None:
+    if expected["version"] != actual["version"]:
+        print(
+            f"  version: gc-tools={expected['version']} evals={actual['version']}",
+            file=sys.stderr,
+        )
     exp_i, act_i = expected["instruments"], actual["instruments"]
     for name in sorted(set(exp_i) | set(act_i)):
         want, got = exp_i.get(name), act_i.get(name)
@@ -238,10 +252,16 @@ def _report_parity_diff(expected: dict[str, Any], actual: dict[str, Any]) -> Non
             g = got[idx] if idx < len(got) else None
             if w != g:
                 print(f"  {name} q[{idx}]: gc-tools={w} evals={g}", file=sys.stderr)
-    if expected["zoneWeights"] != actual["zoneWeights"]:
+    if expected["domainWeights"] != actual["domainWeights"]:
         print(
-            f"  zoneWeights: gc-tools={expected['zoneWeights']} "
-            f"evals={actual['zoneWeights']}",
+            f"  domainWeights: gc-tools={expected['domainWeights']} "
+            f"evals={actual['domainWeights']}",
+            file=sys.stderr,
+        )
+    if expected["domainLabels"] != actual["domainLabels"]:
+        print(
+            f"  domainLabels: gc-tools={expected['domainLabels']} "
+            f"evals={actual['domainLabels']}",
             file=sys.stderr,
         )
 
@@ -263,7 +283,12 @@ def check_instrument_parity() -> None:
         fail(f"{export_path}: invalid JSON: {exc}")
 
     payload = json.loads((DATA / "instruments.json").read_text())
-    expected = {"instruments": export["instruments"], "zoneWeights": export["zoneWeights"]}
+    expected = {
+        "version": export["version"],
+        "instruments": export["instruments"],
+        "domainWeights": export["domainWeights"],
+        "domainLabels": export["domainLabels"],
+    }
     actual = _project_shared_instruments(payload)
     if actual != expected:
         _report_parity_diff(expected, actual)

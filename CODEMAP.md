@@ -15,7 +15,7 @@ GiveCare Evals is a dependency-free dataset repo. The source of truth is JSON/JS
 | `data/reddit-caregivers.jsonl` | SMS-style caregiver scenarios adapted from public posts |
 | `data/multi-turn.jsonl` | Cases requiring assumed context or continuity |
 | `data/all.jsonl` | Canonical concatenation of the four eval splits |
-| `data/instruments.json` | Public SDOH-6, EMA-3, and SDOH-30 instrument definitions |
+| `data/instruments.json` | Public GC-SDOH-6, EMA-3, and GC-SDOH-30 instrument definitions |
 | `scripts/validate.py` | Stdlib validation for dataset shape and split consistency |
 | `scripts/convert-yaml-to-jsonl.ts` | Optional internal conversion helper for Promptfoo YAML sources |
 

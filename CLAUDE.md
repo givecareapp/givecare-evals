@@ -16,7 +16,7 @@ and metadata required by the validator. Keep inputs anonymized and usable
 without private GiveCare context.
 
 ```bash
-python scripts/validate.py
+python3 scripts/validate.py
 ```
 
 Update a source split first, regenerate `data/all.jsonl` through the repository

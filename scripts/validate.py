@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 
 SPLITS = [
-    ("core-behaviors", 40),
+    ("core-behaviors", 41),
     ("red-team", 22),
     ("reddit-caregivers", 47),
     ("multi-turn", 9),

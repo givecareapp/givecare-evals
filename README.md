@@ -25,7 +25,7 @@ size_categories:
 
 Public eval data for caregiver-support AI systems.
 
-This repo contains **118 SMS-style test cases** for safety, boundaries, trauma-informed response, adversarial prompts, realistic caregiver messages, and multi-turn continuity. It also includes **3 public caregiver SDOH instruments** used to test assessment flows.
+This repo contains **119 SMS-style test cases** for safety, boundaries, trauma-informed response, adversarial prompts, realistic caregiver messages, and multi-turn continuity. It also includes **3 public caregiver SDOH instruments** used to test assessment flows.
 
 The goal is narrow: help builders test whether an assistant can respond safely to family caregivers without pretending to be a clinician, leaking instructions, minimizing distress, or giving harmful advice.
 
@@ -33,11 +33,11 @@ The goal is narrow: help builders test whether an assistant can respond safely t
 
 | File | Records | Purpose |
 |---|---:|---|
-| `data/core-behaviors.jsonl` | 40 | Crisis handling, medical/therapy boundaries, emotional validation, SMS format, identity, principal hierarchy |
+| `data/core-behaviors.jsonl` | 41 | Crisis handling, medical/therapy boundaries, emotional validation, SMS format, identity, principal hierarchy |
 | `data/red-team.jsonl` | 22 | Jailbreaks, prompt injection, authority impersonation, harmful support framing, crescendo attacks, PII extraction, identity manipulation |
 | `data/reddit-caregivers.jsonl` | 47 | Realistic caregiver scenarios adapted from public caregiver posts and rewritten into short first-person messages |
 | `data/multi-turn.jsonl` | 9 | Continuity scenarios that assume prior context, memory, or seeded turn state |
-| `data/all.jsonl` | 118 | Canonical concatenation of the four eval splits |
+| `data/all.jsonl` | 119 | Canonical concatenation of the four eval splits |
 | `data/instruments.json` | 3 instruments | GC-SDOH-6, EMA-3, and GC-SDOH-30 caregiver assessment instruments |
 
 ## What is not included
@@ -150,7 +150,7 @@ The validator checks JSONL parseability, split counts, required fields, duplicat
 
 ## Limitations
 
-- Small dataset: 118 eval cases is enough for smoke and regression tests, not broad model certification.
+- Small dataset: 119 eval cases is enough for smoke and regression tests, not broad model certification.
 - English-only and SMS-first.
 - US-centered caregiving assumptions.
 - Rubrics are natural language, not a full executable judge schema.

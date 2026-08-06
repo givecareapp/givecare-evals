@@ -51,10 +51,7 @@ class LocalOwnerArtifactTests(unittest.TestCase):
                 "gate": "none",
                 "adapter": {
                     "kind": "owner-projection-sync",
-                    "ref": (
-                        "python3 scripts/sync_instruments.py --run-dir "
-                        "<exact-gc-tools-hound-run>"
-                    ),
+                    "ref": "scripts/sync_instruments.py",
                 },
                 "accepts": ["givecare.artifact-ref/v1"],
                 "emits": ["@givecare/tools.InstrumentExport"],

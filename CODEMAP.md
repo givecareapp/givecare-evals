@@ -1,6 +1,6 @@
 # Codemap
 
-Generated: 2026-04-30
+Generated: 2026-08-06
 
 ## Architecture
 

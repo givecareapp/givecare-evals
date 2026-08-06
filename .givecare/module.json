@@ -1,0 +1,128 @@
+{
+  "schema_version": "givecare.module/v1",
+  "repository": "gc-evals",
+  "modules": [
+    {
+      "id": "evals.dataset",
+      "authority": {
+        "kind": "git",
+        "ref": "data/"
+      },
+      "truth": [
+        {
+          "kind": "gold-cases",
+          "ref": "data/core-behaviors.jsonl"
+        },
+        {
+          "kind": "gold-cases",
+          "ref": "data/red-team.jsonl"
+        },
+        {
+          "kind": "gold-cases",
+          "ref": "data/reddit-caregivers.jsonl"
+        },
+        {
+          "kind": "gold-cases",
+          "ref": "data/multi-turn.jsonl"
+        },
+        {
+          "kind": "projection",
+          "ref": "data/all.jsonl"
+        },
+        {
+          "kind": "change-kernel",
+          "ref": "hound-driver.json"
+        },
+        {
+          "kind": "imported-projection",
+          "ref": "data/instruments.json"
+        },
+        {
+          "kind": "instrument-overlay",
+          "ref": "data/instruments-overlay.json"
+        }
+      ],
+      "verifiers": [
+        "python3 scripts/validate.py --tools-run-dir <exact-gc-tools-hound-run>"
+      ],
+      "capabilities": [
+        {
+          "name": "evals.gold-cases.read",
+          "effect": "read",
+          "gate": "none",
+          "adapter": {
+            "kind": "file",
+            "ref": "data/all.jsonl"
+          },
+          "accepts": [],
+          "emits": [
+            "gc-evals.gold-case/v1"
+          ]
+        },
+        {
+          "name": "evals.gold-cases.apply",
+          "effect": "write",
+          "gate": "human",
+          "adapter": {
+            "kind": "hound-operation",
+            "ref": "hound-driver.json#corpus.apply"
+          },
+          "accepts": [
+            "gc-evals.gold-case-intake/v1"
+          ],
+          "emits": [
+            "gc-evals.gold-case/v1",
+            "gc-evals.apply-result/v1"
+          ]
+        },
+        {
+          "name": "evals.gold-cases.project",
+          "effect": "write",
+          "gate": "none",
+          "adapter": {
+            "kind": "hound-operation",
+            "ref": "hound-driver.json#corpus.project"
+          },
+          "accepts": [
+            "gc-evals.project-input/v1"
+          ],
+          "emits": [
+            "gc-evals.gold-case/v1",
+            "givecare.artifact-ref/v1"
+          ]
+        },
+        {
+          "name": "evals.instruments.read",
+          "effect": "read",
+          "gate": "none",
+          "adapter": {
+            "kind": "cli",
+            "ref": "python3 scripts/read_instruments.py"
+          },
+          "accepts": [
+            "@givecare/tools.InstrumentExport",
+            "gc-evals.instrument-overlay/v1"
+          ],
+          "emits": [
+            "gc-evals.instrument-record/v2"
+          ]
+        },
+        {
+          "name": "evals.instruments.sync-owner-projection",
+          "effect": "write",
+          "gate": "none",
+          "adapter": {
+            "kind": "cli",
+            "ref": "python3 scripts/sync_instruments.py --run-dir <exact-gc-tools-hound-run>"
+          },
+          "accepts": [
+            "givecare.artifact-ref/v1"
+          ],
+          "emits": [
+            "@givecare/tools.InstrumentExport"
+          ]
+        }
+      ]
+    }
+  ]
+}

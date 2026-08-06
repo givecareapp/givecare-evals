@@ -1,0 +1,40 @@
+{
+  "schema_version": "hound.driver.v1",
+  "id": "gc-evals",
+  "protocol": "hound.protocol.v1",
+  "owner": {
+    "repo": "."
+  },
+  "exec": [
+    "python3",
+    "scripts/hound_driver.py"
+  ],
+  "capabilities": {
+    "corpus.apply": {
+      "effect": "write",
+      "gate": "human"
+    },
+    "corpus.project": {
+      "effect": "write",
+      "gate": "none"
+    }
+  },
+  "run_root": ".hound/runs",
+  "write_scopes": [
+    "data/core-behaviors.jsonl",
+    "data/red-team.jsonl",
+    "data/reddit-caregivers.jsonl",
+    "data/multi-turn.jsonl",
+    "data/all.jsonl"
+  ],
+  "ignored_snapshot_excludes": [
+    ".hound",
+    ".ruff_cache",
+    "__pycache__",
+    "tests/__pycache__"
+  ],
+  "timeouts_seconds": {
+    "default": 120
+  },
+  "env_allowlist": []
+}

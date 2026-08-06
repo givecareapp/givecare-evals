@@ -12,8 +12,9 @@ runner or live service.
 ## Ownership
 
 This repo owns public JSONL cases, splits, validation, instrument records, and
-anonymization. `gc-bench` owns executable evaluation; `gc-tools` owns scoring
-code; `gc-sms` owns runtime behavior; `gc-benefits` owns program facts.
+anonymization. Hound is the only gold-case intake and projection write path.
+`gc-bench` owns executable evaluation; `gc-tools` owns scoring code; `gc-sms`
+owns runtime behavior; `gc-benefits` owns program facts.
 
 ## Invariants
 
@@ -21,7 +22,8 @@ code; `gc-sms` owns runtime behavior; `gc-benefits` owns program facts.
   details.
 - Inputs remain short, SMS-like, and understandable without GiveCare context.
 - Instruments ship only with clear redistribution rights.
-- IDs, fields, split counts, and merged order pass `scripts/validate.py`.
+- IDs, fields, non-shrinking split floors, and merged order pass `scripts/validate.py`.
+- A verified failure becomes public data only through a human-approved Hound plan.
 
 ## Current focus
 

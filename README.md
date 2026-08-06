@@ -29,6 +29,10 @@ This repo contains **118 SMS-style test cases** for safety, boundaries, trauma-i
 
 The goal is narrow: help builders test whether an assistant can respond safely to family caregivers without pretending to be a clinician, leaking instructions, minimizing distress, or giving harmful advice.
 
+Hound is the only write path for public gold cases. It admits one verified,
+human-approved case into one owner split. A separate Hound `corpus.project`
+operation emits the digest-bound `data/all.jsonl` projection.
+
 ## What is included
 
 | File | Records | Purpose |
@@ -38,7 +42,8 @@ The goal is narrow: help builders test whether an assistant can respond safely t
 | `data/reddit-caregivers.jsonl` | 47 | Realistic caregiver scenarios adapted from public caregiver posts and rewritten into short first-person messages |
 | `data/multi-turn.jsonl` | 9 | Continuity scenarios that assume prior context, memory, or seeded turn state |
 | `data/all.jsonl` | 118 | Canonical concatenation of the four eval splits |
-| `data/instruments.json` | 3 instruments | GC-SDOH-6, EMA-3, and GC-SDOH-30 caregiver assessment instruments |
+| `data/instruments.json` | 3 instruments | Exact Hound-verified `gc-tools` projection materialization |
+| `data/instruments-overlay.json` | 3 overlays | Evals-only public packaging and scoring prose |
 
 ## What is not included
 
@@ -78,7 +83,8 @@ Each eval row is one JSON object per line:
 
 ## Assessment instruments
 
-`data/instruments.json` contains public, SMS-administered caregiver SDOH instruments.
+`python3 scripts/read_instruments.py` composes the public, SMS-administered
+caregiver SDOH records from two inputs.
 Raw SDOH answers are deficit-framed, but GiveCare Score normalizes by inversion
 so higher composite and domain scores mean lower pressure. EMA-3 is reported
 separately as an EMA-3 reading.
@@ -91,11 +97,13 @@ separately as an EMA-3 reading.
 
 The instrument **definition** (question ids, prompts, GC domains, scale, and domain
 weights) is owned by [`@givecare/tools`](https://github.com/givecareapp/givecare-tools).
-The records here are a distribution copy: `scripts/validate.py` parity-checks their
-shared fields against the canonical `../gc-tools/data/instruments-export.json` when
-that sibling is present, so this file cannot silently drift from the definition.
-The packaging fields this repo adds for distribution — titles, descriptions,
-cadence, license notes, and band labels — are owned here.
+`data/instruments.json` is an exact byte-for-byte materialization of the
+verified Hound `corpus.project` output from `gc-tools`. Update it only with
+`python3 scripts/sync_instruments.py --run-dir <exact-gc-tools-hound-run>`.
+The command verifies the shared ArtifactRef and exact digest. It never scans
+run history and has no direct-file fallback. `data/instruments-overlay.json`
+owns only Evals packaging: titles, descriptions, cadence, license notes, and
+band labels.
 
 ### Caregiver load domains
 
@@ -140,13 +148,20 @@ for case in cases:
 
 ## Validation
 
-No package install is required.
+No Python package install is required. Workspace validation requires the
+sibling `gc-tools` owner projection and the shared Hound executable.
 
 ```bash
-python3 scripts/validate.py
+python3 scripts/validate.py --tools-run-dir <exact-gc-tools-hound-run>
 ```
 
-The validator checks JSONL parseability, split counts, required fields, duplicate IDs, `all.jsonl` consistency, instrument shape and scoring semantics, instrument parity against the canonical `../gc-tools` export (skipped with a notice when the sibling is absent), high-risk and SMS-format rows with empty `expected_behaviors`, overbroad forbidden patterns, multi-turn context, adapted-scenario identifying and high-specificity markers, and that stale benefits-program data has not been reintroduced.
+The validator checks JSONL parseability, non-shrinking split floors, required fields, duplicate IDs, `all.jsonl` consistency, instrument shape and scoring semantics, exact byte parity with the verified Hound-owned `../gc-tools` projection, high-risk and SMS-format rows with empty `expected_behaviors`, overbroad forbidden patterns, multi-turn context, adapted-scenario identifying and high-specificity markers, and that stale benefits-program data has not been reintroduced.
+
+`--tools-run-dir` is required. It must identify one exact gc-tools
+`corpus.project` run. The validator never chooses a run from history. The
+shared verifier selects the trusted Hound executable.
+
+See [docs/hound.md](./docs/hound.md) for reviewed intake and projection.
 
 ## Limitations
 

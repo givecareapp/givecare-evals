@@ -1,0 +1,130 @@
+{
+  "instruments": {
+    "ema3": {
+      "administration": "SMS, weekly",
+      "cadence": "Twice weekly initially, then weekly; daily only for an explicit short burst",
+      "description": "3-item ecological momentary assessment reported separately from the structural GiveCare Score.",
+      "question_count": 3,
+      "question_overlays": {
+        "coping": {
+          "domain": "coping"
+        },
+        "mood": {
+          "domain": "mood"
+        },
+        "stress": {
+          "domain": "stress"
+        }
+      },
+      "scale": "0-4",
+      "title": "EMA-3 Reading"
+    },
+    "gc_sdoh30": {
+      "administration": "SMS, adaptive (flagged domains only)",
+      "cadence": "Triggered when inverted GC-SDOH-6 domain scores are below 40 on the 0-100 GiveCare Score scale",
+      "description": "30-item deep-dive instrument aligned to GC1-GC6 domains (5 questions per domain). Administered selectively per flagged domain, not as a full battery. Informed by PRAPARE/AHC-HRSN methodology.",
+      "gcDomains": [
+        "GC1:Social Support",
+        "GC2:Physical Health",
+        "GC3:Housing & Environment",
+        "GC4:Financial Resources",
+        "GC5:Navigation",
+        "GC6:Emotional Wellbeing"
+      ],
+      "question_count": 30,
+      "scale": "0-4 (deficit-framed)",
+      "title": "GC-SDOH-30"
+    },
+    "gc_sdoh6": {
+      "administration": "SMS, single session",
+      "cadence": "Baseline, then about every 30 days",
+      "description": "Quick 6-question baseline assessment covering social determinants of health for caregivers. One question per domain, deficit-framed (0=none, 4=extreme).",
+      "gcDomains": [
+        "GC1:Social Support",
+        "GC2:Physical Health",
+        "GC3:Housing & Environment",
+        "GC4:Financial Resources",
+        "GC5:Navigation",
+        "GC6:Emotional Wellbeing"
+      ],
+      "question_count": 6,
+      "question_overlays": {
+        "burnout": {
+          "domain": "burnout"
+        },
+        "financial": {
+          "domain": "financial"
+        },
+        "health": {
+          "domain": "health"
+        },
+        "housing": {
+          "domain": "housing"
+        },
+        "navigation": {
+          "domain": "navigation"
+        },
+        "social": {
+          "domain": "social"
+        }
+      },
+      "scale": "0-4 (deficit-framed)",
+      "title": "GC-SDOH-6"
+    }
+  },
+  "meta": {
+    "description": "SMS-administered caregiver assessment instruments used by GiveCare",
+    "license_notes": {
+      "cwbs14": "EXCLUDED. Caregiver Well-Being Scale (c) 1999 Susan Tebb, Marla Berg-Weger, Doris M. Rubio, revised 2012. Used with permission in GiveCare product. Redistribution rights not confirmed — contact original authors for licensing.",
+      "ema3": "Original instrument by GiveCare. CC-BY-4.0.",
+      "gc_sdoh30": "Original instrument by GiveCare. Informed by PRAPARE/AHC-HRSN methodology. CC-BY-4.0.",
+      "gc_sdoh6": "Original instrument by GiveCare. CC-BY-4.0."
+    }
+  },
+  "schema_version": "gc-evals.instrument-overlay/v1",
+  "scoring": {
+    "composite": {
+      "bands": {
+        "building": {
+          "label": "Pushing Through",
+          "range": "25-49"
+        },
+        "needs_attention": {
+          "label": "Carrying a Lot",
+          "range": "0-24"
+        },
+        "steady": {
+          "label": "Holding Steady",
+          "range": "50-74"
+        },
+        "strong": {
+          "label": "Standing Strong",
+          "range": "75-100"
+        }
+      },
+      "confidence_levels": [
+        "early_estimate",
+        "building",
+        "solid"
+      ],
+      "direction": "higher_score_lower_pressure",
+      "name": "GiveCare Score",
+      "normalization": "Deficit-framed SDOH items are inverted before domain and composite scoring; EMA-3 is excluded.",
+      "range": "0-100",
+      "sdoh30_trigger": "Trigger deep-dive questions for domains scoring below 40 on the inverted 0-100 scale."
+    },
+    "ema_reading": {
+      "direction": "higher_score_lower_immediate_pressure",
+      "instrument": "ema3",
+      "name": "EMA-3 reading",
+      "range": "0-100"
+    },
+    "method": "GiveCare Score uses GC-SDOH-6 as its structural base and completed GC-SDOH-30 questions to refine matching GC domains. EMA-3 is normalized separately as an EMA-3 reading.",
+    "raw_risk_bands": {
+      "critical": ">=75% of max raw deficit score",
+      "high": "50-74% of max raw deficit score",
+      "low": "<25% of max raw deficit score",
+      "moderate": "25-49% of max raw deficit score"
+    }
+  }
+}

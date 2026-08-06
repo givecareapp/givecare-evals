@@ -10,11 +10,11 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  unit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - run: python3 scripts/validate.py
+      - run: python3 -m unittest discover -s tests -v

@@ -50,7 +50,7 @@ class LocalOwnerArtifactTests(unittest.TestCase):
                 "effect": "write",
                 "gate": "none",
                 "adapter": {
-                    "kind": "cli",
+                    "kind": "owner-projection-sync",
                     "ref": (
                         "python3 scripts/sync_instruments.py --run-dir "
                         "<exact-gc-tools-hound-run>"

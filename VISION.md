@@ -1,38 +1,43 @@
 # gc-evals Vision
 
-`gc-evals` distributes public, anonymized caregiver AI cases and assessment
-instrument records.
+`gc-evals` is GiveCare's public, reusable dataset of caregiver AI gold cases and
+assessment instrument records.
 
-## Product bet
+## Product promise
 
 Small, legible records let outsiders inspect and reuse the behaviors GiveCare
 cares about without private product context. This repo is a dataset, not a
 runner or live service.
 
-## Ownership
+## Governing beliefs
 
-This repo owns public JSONL cases, splits, validation, instrument records, and
-anonymization. Hound is the only gold-case intake and projection write path.
-`gc-bench` owns executable evaluation; `gc-tools` owns scoring code; `gc-sms`
-owns runtime behavior; `gc-benefits` owns program facts.
+- Public usefulness begins with strict privacy and anonymization.
+- A gold case should be understandable without GiveCare context.
+- Assessment instruments should ship only with clear redistribution rights.
+- A verified failure is a candidate for human review, not automatic public
+  data or product authority.
+- Stable, inspectable records matter more than dataset size.
 
-## Invariants
+## Direction
 
-- No private prompts, traces, conversations, usernames, links, or identifying
-  details.
-- Inputs remain short, SMS-like, and understandable without GiveCare context.
-- Instruments ship only with clear redistribution rights.
-- IDs, fields, non-shrinking split floors, and merged order pass `scripts/validate.py`.
-- A verified failure becomes public data only through a human-approved Hound plan.
+The dataset should grow toward better caregiver-behavior coverage and clearer
+outside reuse. Instrument distribution should remain faithful to its public
+source while the gold cases stay independent of any one runner or model.
 
-## Current focus
+## Success
 
-- Public-safe cases with useful caregiver-behavior coverage.
-- GC-SDOH-6, EMA-3, and GC-SDOH-30 distribution records.
-- Clean candidate flow into `gc-bench` staging.
+`gc-evals` succeeds when an outsider can inspect and reuse public caregiver AI
+cases and instrument records without private prompts, traces, identities, or
+product assumptions.
 
-## Non-goals
+## Refusals
 
-- A runner, verifier, or scoring implementation.
-- Private-trace ingestion.
+- A runner, verifier, scoring implementation, or live policy system.
+- Private-trace ingestion or identifying detail.
 - Benefits data or generated source corpora.
+- Automatic promotion from a failure signal.
+
+## Document boundary
+
+Dataset boundaries live in [CODEMAP.md](CODEMAP.md). Operating detail lives in
+[CLAUDE.md](CLAUDE.md) and [the Hound guide](docs/hound.md).

@@ -29,7 +29,6 @@
   ],
   "ignored_snapshot_excludes": [
     ".evidence",
-    ".hound",
     ".ruff_cache",
     "__pycache__",
     "tests/__pycache__"

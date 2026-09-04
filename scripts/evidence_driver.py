@@ -60,7 +60,7 @@ APPLY_CAPABILITY = {
     "gate": "human",
     "adapter": {
         "kind": "hound-operation",
-        "ref": "hound-driver.json#corpus.apply",
+        "ref": "evidence-driver.json#corpus.apply",
     },
     "accepts": ["gc-evals.gold-case-intake/v1"],
     "emits": ["gc-evals.gold-case/v1", "gc-evals.apply-result/v1"],

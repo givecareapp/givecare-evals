@@ -15,14 +15,14 @@ from types import SimpleNamespace
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
-DRIVER = ROOT / "scripts" / "hound_driver.py"
+DRIVER = ROOT / "scripts" / "evidence_driver.py"
 APPLY_CAPABILITY = {
     "name": "evals.gold-cases.apply",
     "effect": "write",
     "gate": "human",
     "adapter": {
         "kind": "hound-operation",
-        "ref": "hound-driver.json#corpus.apply",
+        "ref": "evidence-driver.json#corpus.apply",
     },
     "accepts": ["gc-evals.gold-case-intake/v1"],
     "emits": ["gc-evals.gold-case/v1", "gc-evals.apply-result/v1"],
@@ -30,7 +30,7 @@ APPLY_CAPABILITY = {
 
 
 def load_driver():
-    spec = importlib.util.spec_from_file_location("gc_evals_hound_driver", DRIVER)
+    spec = importlib.util.spec_from_file_location("gc_evals_evidence_driver", DRIVER)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

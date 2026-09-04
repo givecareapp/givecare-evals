@@ -1,8 +1,8 @@
-# Hound gold-case intake
+# Helm Evidence gold-case intake
 
 <!-- Diataxis: how-to -->
 
-Hound is the only gold-case write path. It does not score replies. It does not
+Helm Evidence is the only gold-case write path. It does not score replies. It does not
 read private evidence content. It binds one strict GiveCare learning Trace to
 one public-safe gold case and one exact projection digest.
 
@@ -10,7 +10,7 @@ Before local target parsing, the adapter passes the Trace to the shared root
 `givecare_protocol.py trace --show-restricted` validator. That validator owns
 the shared schema, receipt rules, hashes, and historical module pins. Evals
 requires its returned `intent_contract` to equal the exact human-gated
-`evals.gold-cases.apply` Hound capability. Evals then checks only its proposal
+`evals.gold-cases.apply` Helm Evidence capability. Evals then checks only its proposal
 source, release rules, and local gold case.
 
 ## Intake contract
@@ -134,11 +134,11 @@ be `evals.dataset` and `evals.gold-cases.apply`. The mutable lever must be
 ## Apply one reviewed gold case
 
 ```bash
-/home/deploy/.local/bin/hound driver check --driver hound-driver.json
-/home/deploy/.local/bin/hound plan --driver hound-driver.json --operation corpus.apply --input /path/to/intake.json --as-of YYYY-MM-DD --output /tmp/gc-evals-apply-plan.json
-/home/deploy/.local/bin/hound approve --plan /tmp/gc-evals-apply-plan.json --reviewer reviewer@example.com --output /tmp/gc-evals-apply-approval.json
-/home/deploy/.local/bin/hound execute --driver hound-driver.json --plan /tmp/gc-evals-apply-plan.json --approval /tmp/gc-evals-apply-approval.json
-/home/deploy/.local/bin/hound verify .hound/runs/<plan-id>
+/home/deploy/apps/helm/current/.venv/bin/helm evidence driver check --driver evidence-driver.json
+/home/deploy/apps/helm/current/.venv/bin/helm evidence plan --driver evidence-driver.json --operation corpus.apply --input /path/to/intake.json --as-of YYYY-MM-DD --output /tmp/gc-evals-apply-plan.json
+/home/deploy/.local/bin/helm evidence approve --plan /tmp/gc-evals-apply-plan.json --reviewer reviewer@example.com --output /tmp/gc-evals-apply-approval.json
+/home/deploy/apps/helm/current/.venv/bin/helm evidence execute --driver evidence-driver.json --plan /tmp/gc-evals-apply-plan.json --approval /tmp/gc-evals-apply-approval.json
+/home/deploy/apps/helm/current/.venv/bin/helm evidence verify .evidence/runs/<plan-id>
 ```
 
 The native plan and result preserve the learning loop ID, intent digest, Trace
@@ -153,9 +153,9 @@ Run this after every successful apply. It is also the repair path when
 `data/all.jsonl` does not match the owner split files.
 
 ```bash
-/home/deploy/.local/bin/hound plan --driver hound-driver.json --operation corpus.project --as-of YYYY-MM-DD --output /tmp/gc-evals-project-plan.json
-/home/deploy/.local/bin/hound execute --driver hound-driver.json --plan /tmp/gc-evals-project-plan.json
-/home/deploy/.local/bin/hound verify .hound/runs/<plan-id>
+/home/deploy/apps/helm/current/.venv/bin/helm evidence plan --driver evidence-driver.json --operation corpus.project --as-of YYYY-MM-DD --output /tmp/gc-evals-project-plan.json
+/home/deploy/apps/helm/current/.venv/bin/helm evidence execute --driver evidence-driver.json --plan /tmp/gc-evals-project-plan.json
+/home/deploy/apps/helm/current/.venv/bin/helm evidence verify .evidence/runs/<plan-id>
 python3 scripts/validate.py --tools-run-dir <exact-gc-tools-hound-run>
 ```
 
@@ -166,5 +166,5 @@ The ArtifactRef kind is `owner-projection`.
 `corpus.project` needs no learning lineage for an owner-driven rebuild. A
 learning-driven caller may pass `gc-evals.project-input/v1` with one exact
 `learning_lineage` object. The object contains only `demand_sha256`,
-`trace_refs`, and `module_refs`. Hound preserves it in the native plan and
+`trace_refs`, and `module_refs`. Helm Evidence preserves it in the native plan and
 result. The driver never creates a synthetic Trace.

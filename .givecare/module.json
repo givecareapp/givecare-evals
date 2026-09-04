@@ -31,7 +31,7 @@
         },
         {
           "kind": "change-kernel",
-          "ref": "hound-driver.json"
+          "ref": "evidence-driver.json"
         },
         {
           "kind": "imported-projection",
@@ -64,8 +64,8 @@
           "effect": "write",
           "gate": "human",
           "adapter": {
-            "kind": "hound-operation",
-            "ref": "hound-driver.json#corpus.apply"
+            "kind": "evidence-operation",
+            "ref": "evidence-driver.json#corpus.apply"
           },
           "accepts": [
             "gc-evals.gold-case-intake/v1"
@@ -80,8 +80,8 @@
           "effect": "write",
           "gate": "none",
           "adapter": {
-            "kind": "hound-operation",
-            "ref": "hound-driver.json#corpus.project"
+            "kind": "evidence-operation",
+            "ref": "evidence-driver.json#corpus.project"
           },
           "accepts": [
             "gc-evals.project-input/v1"

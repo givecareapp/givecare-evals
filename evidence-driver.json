@@ -7,7 +7,7 @@
   },
   "exec": [
     "python3",
-    "scripts/hound_driver.py"
+    "scripts/evidence_driver.py"
   ],
   "capabilities": {
     "corpus.apply": {
@@ -19,7 +19,7 @@
       "gate": "none"
     }
   },
-  "run_root": ".hound/runs",
+  "run_root": ".evidence/runs",
   "write_scopes": [
     "data/core-behaviors.jsonl",
     "data/red-team.jsonl",
@@ -28,6 +28,7 @@
     "data/all.jsonl"
   ],
   "ignored_snapshot_excludes": [
+    ".evidence",
     ".hound",
     ".ruff_cache",
     "__pycache__",

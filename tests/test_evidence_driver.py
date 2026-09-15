@@ -263,6 +263,67 @@ class HoundDriverTests(unittest.TestCase):
         self.assertEqual(repeated["outcome"], "no-change")
         self.assertEqual(repeated["data"]["expected_effects"], [])
 
+    def _break_one_existing_record(self) -> None:
+        """Drop a required field from a shipped record and refresh the projection.
+
+        The corpus is now invalid, but ``data/all.jsonl`` still equals the splits,
+        so staleness is not what stops the apply path.
+        """
+        path = self.repo / "data" / "red-team.jsonl"
+        records = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+        del records[0]["expected_behaviors"]
+        path.write_text(
+            "".join(
+                json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
+                for record in records
+            ),
+            encoding="utf-8",
+        )
+        (self.repo / "data" / "all.jsonl").write_bytes(
+            b"".join(
+                (self.repo / "data" / f"{split}.jsonl").read_bytes()
+                for split in self.driver.SPLITS
+            )
+        )
+
+    def test_apply_refuses_the_validator_proof_when_the_corpus_is_invalid(self) -> None:
+        """An unrun owner check must not be reported as a passed proof.
+
+        Both apply paths answer with ``gold-case-owner-validator passed: True``.
+        The no-change path runs no record validation at all, so without an
+        explicit corpus check the adapter converts missing evidence into a pass.
+        """
+        self._break_one_existing_record()
+
+        already_present = json.loads(
+            (self.repo / "data" / "core-behaviors.jsonl").read_text().splitlines()[0]
+        )
+        no_change_input = intake()
+        no_change_input["gold_case"] = already_present
+
+        for label, request_input in (
+            ("no-change", no_change_input),
+            ("new-case", intake()),
+        ):
+            with self.subTest(path=label):
+                with self.assertRaisesRegex(
+                    self.driver.DriverError, "owner split validation failed before plan"
+                ):
+                    self.driver.handle_request(
+                        self.repo,
+                        {"mode": "plan", "operation": "corpus.apply", "input": request_input},
+                    )
+
+    def test_apply_keeps_its_validator_proof_on_a_valid_corpus(self) -> None:
+        response = self.driver.handle_request(
+            self.repo,
+            {"mode": "plan", "operation": "corpus.apply", "input": intake()},
+        )
+        self.assertEqual(response["outcome"], "planned")
+        self.assertEqual(
+            response["proofs"], [{"kind": "gold-case-owner-validator", "passed": True}]
+        )
+
     def test_apply_rejects_unverified_or_unreleased_intake(self) -> None:
         request_input = intake()
         request_input["release"]["public_safe"] = False

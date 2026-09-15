@@ -446,6 +446,11 @@ def _apply_plan(root: Path, value: Any) -> dict[str, Any]:
     _payload, gold_case, learning = _validate_intake(root, value)
     split_bytes = _read_split_bytes(root)
     _validate_current_projection(root, split_bytes)
+    # The apply response asserts a gold-case-owner-validator proof. Run the owner
+    # split validator here so that claim covers the corpus on disk, not only the
+    # incoming record. Without it an unchecked corpus is reported as passed, and
+    # the no-change path runs no validator at all.
+    _run_owner_split_validator(root, "before plan")
     records = _existing_records(root, split_bytes)
     existing = next((record for record in records if record.get("id") == gold_case.get("id")), None)
     if existing is not None:
@@ -549,7 +554,7 @@ def _run_owner_validator(root: Path) -> None:
         raise DriverError(f"owner validation failed after write: {detail}") from error
 
 
-def _run_owner_split_validator(root: Path) -> None:
+def _run_owner_split_validator(root: Path, stage: str = "after write") -> None:
     validator = _load_validator(root)
     stdout = io.StringIO()
     stderr = io.StringIO()
@@ -558,7 +563,7 @@ def _run_owner_split_validator(root: Path) -> None:
             validator.validate_source_splits()
     except SystemExit as error:
         detail = stderr.getvalue().strip() or stdout.getvalue().strip() or str(error)
-        raise DriverError(f"owner split validation failed after write: {detail}") from error
+        raise DriverError(f"owner split validation failed {stage}: {detail}") from error
 
 
 def handle_request(root: Path, request: dict[str, Any]) -> dict[str, Any]:

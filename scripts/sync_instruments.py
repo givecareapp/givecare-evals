@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Materialize one exact verified gc-tools Hound instrument projection."""
+"""Materialize one exact committed gc-tools instrument projection."""
 
 from __future__ import annotations
 
@@ -34,15 +34,15 @@ def _fsync_directory(path: Path) -> None:
 
 def materialize(
     *,
-    run_dir: Path,
+    owner_commit: str,
     tools_root: Path = TOOLS_ROOT,
     protocol_cli: Path = PROTOCOL_CLI,
     target: Path = TARGET,
 ) -> bool:
     """Write exact verified bytes to the fixed consumer path. Return whether changed."""
-    _run, _source, content = resolve_verified_tools_projection(
+    content = resolve_verified_tools_projection(
         tools_root=tools_root,
-        run_dir=run_dir,
+        owner_commit=owner_commit,
         protocol_cli=protocol_cli,
     )
     if target.is_symlink() or target.parent.is_symlink():
@@ -53,9 +53,7 @@ def materialize(
         return False
 
     target.parent.mkdir(parents=True, exist_ok=True)
-    descriptor, temporary_name = tempfile.mkstemp(
-        prefix=f".{target.name}.sync-", dir=target.parent
-    )
+    descriptor, temporary_name = tempfile.mkstemp(prefix=f".{target.name}.sync-", dir=target.parent)
     temporary = Path(temporary_name)
     try:
         with os.fdopen(descriptor, "wb") as stream:
@@ -74,9 +72,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Sync the exact verified gc-tools instrument projection."
     )
-    parser.add_argument("--run-dir", type=Path, required=True)
+    parser.add_argument("--owner-commit", required=True)
     args = parser.parse_args(argv)
-    changed = materialize(run_dir=args.run_dir)
+    changed = materialize(owner_commit=args.owner_commit)
     print("updated data/instruments.json" if changed else "data/instruments.json is current")
     return 0
 

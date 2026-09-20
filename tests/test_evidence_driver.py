@@ -157,7 +157,13 @@ def shared_summary(trace: dict) -> dict:
 class HoundDriverTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
-        self.repo = Path(self.temporary.name)
+        workspace = Path(self.temporary.name)
+        self.repo = workspace / "gc-evals"
+        self.repo.mkdir()
+        (workspace / "scripts").mkdir()
+        (workspace / "scripts/givecare_protocol.py").write_text(
+            "raise RuntimeError('the unit test must mock the protocol process')\n"
+        )
         shutil.copytree(ROOT / "data", self.repo / "data")
         (self.repo / "scripts").mkdir()
         shutil.copy2(ROOT / "scripts" / "validate.py", self.repo / "scripts" / "validate.py")
@@ -361,6 +367,7 @@ class HoundDriverTests(unittest.TestCase):
 
     def test_apply_rejects_stale_pinned_capability_contract(self) -> None:
         driver = load_driver()
+        driver.ROOT = self.repo
         request_input = intake()
         stale = shared_summary(request_input["trace"])
         stale["intent_contract"] = {**APPLY_CAPABILITY, "gate": "none"}
@@ -377,6 +384,7 @@ class HoundDriverTests(unittest.TestCase):
 
     def test_shared_trace_uses_restricted_root_summary(self) -> None:
         driver = load_driver()
+        driver.ROOT = self.repo
         request_input = intake()
         calls: list[list[str]] = []
 

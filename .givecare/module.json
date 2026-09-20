@@ -43,7 +43,7 @@
         }
       ],
       "verifiers": [
-        "python3 scripts/validate.py --tools-run-dir <exact-gc-tools-hound-run>"
+        "python3 scripts/validate.py --tools-commit <full-gc-tools-commit>"
       ],
       "capabilities": [
         {

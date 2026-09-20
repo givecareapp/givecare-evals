@@ -23,6 +23,8 @@ size_categories:
 
 # GiveCare Evals
 
+<!-- Diátaxis: reference -->
+
 Public eval data for caregiver-support AI systems.
 
 This repo contains **118 SMS-style test cases** for safety, boundaries, trauma-informed response, adversarial prompts, realistic caregiver messages, and multi-turn continuity. It also includes **3 public caregiver SDOH instruments** used to test assessment flows.
@@ -148,20 +150,21 @@ for case in cases:
 
 ## Validation
 
-No Python package install is required. Workspace validation requires the
-sibling `gc-tools` owner projection and the shared Hound executable.
+No Python package install is required. Run the public unit tests from this
+checkout with `python3 -m unittest discover -s tests`. Workspace validation also
+requires the sibling `gc-tools` owner projection and the workspace protocol CLI.
 
 ```bash
-python3 scripts/validate.py --tools-run-dir <exact-gc-tools-hound-run>
+python3 scripts/validate.py --tools-commit <full-gc-tools-commit>
 ```
 
-The validator checks JSONL parseability, non-shrinking split floors, required fields, duplicate IDs, `all.jsonl` consistency, instrument shape and scoring semantics, exact byte parity with the verified Hound-owned `../gc-tools` projection, high-risk and SMS-format rows with empty `expected_behaviors`, overbroad forbidden patterns, multi-turn context, adapted-scenario identifying and high-specificity markers, and that stale benefits-program data has not been reintroduced.
+The validator checks JSONL parseability, non-shrinking split floors, required fields, duplicate IDs, `all.jsonl` consistency, instrument shape and scoring semantics, exact byte parity with the verified committed `../gc-tools` projection, high-risk and SMS-format rows with empty `expected_behaviors`, overbroad forbidden patterns, multi-turn context, adapted-scenario identifying and high-specificity markers, and that stale benefits-program data has not been reintroduced.
 
-`--tools-run-dir` is required. It must identify one exact gc-tools
-`corpus.project` run. The validator never chooses a run from history. The
-shared verifier selects the trusted Hound executable.
+`--tools-commit` is required. It must identify one full commit reachable from
+`gc-tools` local `main`. The validator reads committed bytes and rejects local
+instrument drift. It never selects the latest revision for the caller.
 
-See [docs/hound.md](./docs/hound.md) for reviewed intake and projection.
+See [docs/evidence.md](./docs/evidence.md) for reviewed intake and projection.
 
 ## Limitations
 

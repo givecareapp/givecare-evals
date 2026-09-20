@@ -144,7 +144,9 @@ def validate_record(path: Path, record: dict[str, Any], ids: set[str]) -> None:
         if field == "forbidden_patterns":
             for item in value:
                 if item in OVERBROAD_FORBIDDEN_PATTERNS:
-                    fail(f"{path}: {record_id}: forbidden_patterns contains overbroad literal {item!r}")
+                    fail(
+                        f"{path}: {record_id}: forbidden_patterns contains overbroad literal {item!r}"
+                    )
 
     category = record["category"]
     expected_behaviors = record["expected_behaviors"]
@@ -157,7 +159,9 @@ def validate_record(path: Path, record: dict[str, Any], ids: set[str]) -> None:
         input_text = record["input"]
         for marker in REDDIT_INPUT_DENYLIST:
             if marker in input_text:
-                fail(f"{path}: {record_id}: reddit input contains disallowed identifying marker {marker!r}")
+                fail(
+                    f"{path}: {record_id}: reddit input contains disallowed identifying marker {marker!r}"
+                )
 
     if split == "multi-turn":
         context = record.get("context")
@@ -215,6 +219,7 @@ def _read_json_object(path: Path) -> dict[str, Any]:
         fail(f"{path}: root must be an object")
     return payload
 
+
 def build_instrument_records() -> dict[str, Any]:
     """Compose the public Evals view from one imported owner projection and overlay."""
     materialization_path = DATA / "instruments.json"
@@ -251,9 +256,7 @@ def build_instrument_records() -> dict[str, Any]:
         question_overlays = package.pop("question_overlays", {})
         if not isinstance(question_overlays, dict):
             fail(f"{overlay_path}: {name}.question_overlays must be an object")
-        question_ids = {
-            question.get("id") for question in questions if isinstance(question, dict)
-        }
+        question_ids = {question.get("id") for question in questions if isinstance(question, dict)}
         if set(question_overlays) - question_ids:
             fail(f"{overlay_path}: {name}.question_overlays contains unknown question ids")
         merged_questions: list[dict[str, Any]] = []
@@ -289,9 +292,9 @@ def build_instrument_records() -> dict[str, Any]:
 def resolve_verified_tools_projection(
     *,
     tools_root: Path,
-    run_dir: Path,
+    owner_commit: str,
     protocol_cli: Path,
-) -> tuple[Path, Path, bytes]:
+) -> bytes:
     """Resolve one exact projection through the shared protocol verifier."""
     if not protocol_cli.is_file():
         raise ProjectionError(f"missing shared projection verifier: {protocol_cli}")
@@ -300,14 +303,16 @@ def resolve_verified_tools_projection(
             sys.executable,
             str(protocol_cli),
             "--root",
-            str(ROOT.parent),
+            str(tools_root.parent),
             "projection-ref",
-            "--run-dir",
-            str(run_dir),
+            "--owner-commit",
+            owner_commit,
+            "--access",
+            "public",
             "--owner-repo",
             "gc-tools",
-            "--driver-id",
-            "gc-tools-instruments",
+            "--capability",
+            "methods.assessment.project",
             "--artifact-owner",
             "tools.assessments",
             "--artifact-id",
@@ -327,39 +332,37 @@ def resolve_verified_tools_projection(
         raise ProjectionError("shared projection verifier emitted invalid JSON") from error
     if not isinstance(artifact_ref, dict):
         raise ProjectionError("shared projection verifier did not emit an ArtifactRef")
-    artifact_id = artifact_ref.get("artifact_id")
-    if not isinstance(artifact_id, str):
-        raise ProjectionError("verified ArtifactRef has no artifact_id")
-    owner_root = tools_root.resolve()
-    projection_path = (owner_root / artifact_id).resolve()
-    if projection_path == owner_root or owner_root not in projection_path.parents:
-        raise ProjectionError("verified ArtifactRef escapes the gc-tools owner repo")
-    if not projection_path.is_file():
-        raise ProjectionError("verified owner projection is not a readable file")
-    export_bytes = projection_path.read_bytes()
+    result = subprocess.run(
+        ["git", "-C", str(tools_root), "show", f"{owner_commit}:data/instruments-export.json"],
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ProjectionError("committed owner projection is unreadable")
+    export_bytes = result.stdout
     digest = hashlib.sha256(export_bytes).hexdigest()
     expected_ref = {
         "schema_version": "givecare.artifact-ref/v1",
         "owner": "tools.assessments",
         "kind": "owner-projection",
         "artifact_id": "data/instruments-export.json",
-        "revision": f"sha256:{digest}",
+        "revision": f"git:{owner_commit}",
         "sha256": digest,
         "access": "public",
     }
     if artifact_ref != expected_ref:
         raise ProjectionError("verified ArtifactRef does not match the owner projection bytes")
-    return run_dir, projection_path, export_bytes
+    return export_bytes
 
 
-def check_instrument_parity(*, tools_run_dir: Path) -> None:
-    """Require the exact verified Hound projection owned by gc-tools."""
+def check_instrument_parity(*, tools_commit: str) -> None:
+    """Require the exact committed projection owned by gc-tools."""
     tools_root = ROOT.parent / "gc-tools"
     protocol_cli = ROOT.parent / "scripts" / "givecare_protocol.py"
     try:
-        verified_run, export_path, export_bytes = resolve_verified_tools_projection(
+        export_bytes = resolve_verified_tools_projection(
             tools_root=tools_root,
-            run_dir=tools_run_dir,
+            owner_commit=tools_commit,
             protocol_cli=protocol_cli,
         )
     except (ProjectionError, OSError, subprocess.TimeoutExpired) as error:
@@ -369,12 +372,9 @@ def check_instrument_parity(*, tools_run_dir: Path) -> None:
     if materialization != export_bytes:
         fail(
             "data/instruments.json is not the exact byte-for-byte materialization of "
-            "the verified gc-tools Hound projection; run scripts/sync_instruments.py"
+            "the committed gc-tools projection; run scripts/sync_instruments.py"
         )
-    print(
-        "ok: instrument parity with verified gc-tools Hound projection "
-        f"{verified_run.name}"
-    )
+    print(f"ok: instrument parity with gc-tools git:{tools_commit}")
 
 
 def validate_source_splits() -> tuple[int, list[dict[str, Any]]]:
@@ -411,16 +411,15 @@ def validate_gold_cases() -> int:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Validate GiveCare Evals owner artifacts.")
     parser.add_argument(
-        "--tools-run-dir",
-        type=Path,
+        "--tools-commit",
         required=True,
-        help="exact verified gc-tools corpus.project run directory",
+        help="exact gc-tools owner commit",
     )
     args = parser.parse_args(argv)
     record_count = validate_gold_cases()
 
     validate_instruments()
-    check_instrument_parity(tools_run_dir=args.tools_run_dir)
+    check_instrument_parity(tools_commit=args.tools_commit)
     print(f"ok: {record_count} eval records, {len(EXPECTED_INSTRUMENTS)} instruments")
 
 

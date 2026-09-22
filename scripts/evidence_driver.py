@@ -59,7 +59,7 @@ APPLY_CAPABILITY = {
     "effect": "write",
     "gate": "human",
     "adapter": {
-        "kind": "hound-operation",
+        "kind": "evidence-operation",
         "ref": "evidence-driver.json#corpus.apply",
     },
     "accepts": ["gc-evals.gold-case-intake/v1"],
@@ -516,19 +516,7 @@ def _project_plan(root: Path, value: Any) -> dict[str, Any]:
 
 def _write_effects(root: Path, plan: dict[str, Any]) -> list[str]:
     written: list[str] = []
-    if plan["schema_version"] == "gc-evals.apply-plan/v1" and plan["expected_effects"]:
-        target = str(plan["target_split"])
-        split_bytes = _read_split_bytes(root)
-        encoded = json.dumps(
-            plan["gold_case"],
-            ensure_ascii=False,
-            sort_keys=True,
-            separators=(",", ":"),
-        ).encode("utf-8") + b"\n"
-        split_bytes[target] += encoded
-        outputs = {f"data/{target}.jsonl": split_bytes[target]}
-    else:
-        outputs = {"data/all.jsonl": _project(_read_split_bytes(root))}
+    outputs = {"data/all.jsonl": _project(_read_split_bytes(root))}
 
     for effect in plan["expected_effects"]:
         relative = effect["path"]
@@ -589,20 +577,9 @@ def handle_request(root: Path, request: dict[str, Any]) -> dict[str, Any]:
         )
 
     if operation == "corpus.apply" and mode == "execute":
-        plan = _apply_plan(root, value)
-        if request.get("driver_plan") != plan:
-            raise DriverError("approved corpus plan no longer matches the intake")
-        written = _write_effects(root, plan)
-        _run_owner_split_validator(root)
-        return _response(
-            outcome="completed" if written else "no-change",
-            data_schema="gc-evals.apply-result/v1",
-            data={
-                "written": written,
-                "next_projection_sha256": plan.get("next_projection_sha256"),
-                "learning": plan["learning"],
-            },
-            proofs=[{"kind": "gold-case-owner-validator", "passed": True}],
+        raise DriverError(
+            "evals.gold-cases.apply is blocked: native exact-plan approval verification "
+            "is unavailable"
         )
 
     if operation == "corpus.project" and mode == "plan":

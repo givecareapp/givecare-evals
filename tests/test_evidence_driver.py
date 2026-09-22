@@ -21,7 +21,7 @@ APPLY_CAPABILITY = {
     "effect": "write",
     "gate": "human",
     "adapter": {
-        "kind": "hound-operation",
+        "kind": "evidence-operation",
         "ref": "evidence-driver.json#corpus.apply",
     },
     "accepts": ["gc-evals.gold-case-intake/v1"],
@@ -197,7 +197,7 @@ class HoundDriverTests(unittest.TestCase):
             {"owner": "gc-evals", "protocol": "hound.protocol.v1"},
         )
 
-    def test_apply_updates_only_source_then_project_updates_only_projection(self) -> None:
+    def test_apply_plans_but_execute_without_trusted_approval_writes_nothing(self) -> None:
         request = {
             "mode": "plan",
             "operation": "corpus.apply",
@@ -224,50 +224,27 @@ class HoundDriverTests(unittest.TestCase):
             first["data"]["learning"]["intent_contract"], APPLY_CAPABILITY
         )
 
-        before_projection = (self.repo / "data" / "all.jsonl").read_bytes()
-        executed = self.driver.handle_request(
-            self.repo,
-            {**request, "mode": "execute", "driver_plan": first["data"]},
-        )
-        self.assertEqual(executed["outcome"], "completed")
-        self.assertEqual(
-            executed["data"]["learning"],
-            first["data"]["learning"],
-        )
-        self.assertEqual((self.repo / "data" / "all.jsonl").read_bytes(), before_projection)
-        self.assertNotEqual(
-            (self.repo / "data" / "all.jsonl").read_bytes(),
-            b"".join(
-                (self.repo / "data" / f"{split}.jsonl").read_bytes()
-                for split in self.driver.SPLITS
-            ),
-        )
+        before = {p.name: p.read_bytes() for p in (self.repo / "data").iterdir() if p.is_file()}
+        for supplied in ({}, {"approval": {"actor": "owner", "approved": True}}):
+            with self.subTest(supplied=supplied), self.assertRaisesRegex(
+                self.driver.DriverError, "native exact-plan approval verification is unavailable"
+            ):
+                self.driver.handle_request(
+                    self.repo,
+                    {**request, "mode": "execute", "driver_plan": first["data"], **supplied},
+                )
+            self.assertEqual(
+                {p.name: p.read_bytes() for p in (self.repo / "data").iterdir() if p.is_file()},
+                before,
+            )
 
-        with self.assertRaisesRegex(self.driver.DriverError, "run corpus.project"):
-            self.driver.handle_request(self.repo, request)
-
-        project_request = {"mode": "plan", "operation": "corpus.project", "input": {}}
-        project_plan = self.driver.handle_request(self.repo, project_request)
-        self.assertEqual(
-            [item["path"] for item in project_plan["data"]["expected_effects"]],
-            ["data/all.jsonl"],
+    def test_apply_capability_matches_the_declared_owner(self) -> None:
+        declaration = json.loads((ROOT / ".givecare/module.json").read_text())
+        declared = next(
+            c for m in declaration["modules"] for c in m["capabilities"]
+            if c["name"] == "evals.gold-cases.apply"
         )
-        projected = self.driver.handle_request(
-            self.repo,
-            {**project_request, "mode": "execute", "driver_plan": project_plan["data"]},
-        )
-        self.assertEqual(projected["outcome"], "completed")
-        self.assertEqual(
-            (self.repo / "data" / "all.jsonl").read_bytes(),
-            b"".join(
-                (self.repo / "data" / f"{split}.jsonl").read_bytes()
-                for split in self.driver.SPLITS
-            ),
-        )
-
-        repeated = self.driver.handle_request(self.repo, request)
-        self.assertEqual(repeated["outcome"], "no-change")
-        self.assertEqual(repeated["data"]["expected_effects"], [])
+        self.assertEqual(self.driver.APPLY_CAPABILITY, declared)
 
     def _break_one_existing_record(self) -> None:
         """Drop a required field from a shipped record and refresh the projection.

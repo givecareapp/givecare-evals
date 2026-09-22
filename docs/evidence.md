@@ -146,10 +146,10 @@ exact plan. The reviewer
 must confirm the failure evidence, anonymization, public safety, redistribution
 rights, and case wording. Exact-plan human approval remains required.
 
-The retired Helm approval command is unavailable. The native adapter checks
-plan equality but does not verify an approval receipt. Gold-case apply remains
-blocked until its native execution path preserves that consent check. Do not
-use a direct `execute` request as a replacement for approval.
+The native adapter rejects every gold-case `execute` request before writing.
+Planning remains available for review. Apply must stay blocked until the native
+owner can verify trusted approval bound to the exact plan. A caller-supplied
+`approval` field cannot grant consent.
 
 ## Rebuild the projection
 

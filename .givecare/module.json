@@ -30,10 +30,6 @@
           "ref": "data/all.jsonl"
         },
         {
-          "kind": "change-kernel",
-          "ref": "evidence-driver.json"
-        },
-        {
           "kind": "imported-projection",
           "ref": "data/instruments.json"
         },
@@ -64,8 +60,8 @@
           "effect": "write",
           "gate": "human",
           "adapter": {
-            "kind": "evidence-operation",
-            "ref": "evidence-driver.json#corpus.apply"
+            "kind": "human-review",
+            "ref": "docs/evidence.md"
           },
           "accepts": [
             "gc-evals.gold-case-intake/v1"
@@ -80,12 +76,10 @@
           "effect": "write",
           "gate": "none",
           "adapter": {
-            "kind": "evidence-operation",
-            "ref": "evidence-driver.json#corpus.project"
+            "kind": "script",
+            "ref": "scripts/project_gold_cases.py"
           },
-          "accepts": [
-            "gc-evals.project-input/v1"
-          ],
+          "accepts": [],
           "emits": [
             "gc-evals.gold-case/v1",
             "givecare.artifact-ref/v1"

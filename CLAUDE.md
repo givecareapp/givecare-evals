@@ -11,7 +11,7 @@ Operational guide for the public dataset. Read `VISION.md` for scope.
 - `data/all.jsonl`: generated merged dataset.
 - `data/instruments.json`: exact materialization of the verified Tools projection.
 - `data/instruments-overlay.json`: Evals-only public packaging fields.
-- `evidence-driver.json`: native gold-case intake and projection operations.
+- `scripts/project_gold_cases.py`: rebuilds `data/all.jsonl` from the splits.
 - `scripts/validate.py`: schema, IDs, splits, order, and safety checks.
 - `CODEMAP.md`: data flow and boundaries.
 
@@ -23,9 +23,10 @@ without private GiveCare context.
 python3 scripts/validate.py --tools-commit <full-gc-tools-commit>
 ```
 
-Use the native owner adapter for every gold-case write. `corpus.apply` accepts one verified,
-public-safe intake and requires human approval. It updates only the selected
-owner split. Run `corpus.project` next. That operation alone writes
+Every gold-case write is a reviewed, human-made edit; there is no automated
+writer. `evals.gold-cases.apply` requires one verified, public-safe intake and
+human approval; a reviewer appends it to the selected owner split by hand. Run
+`python3 scripts/project_gold_cases.py` next. That script alone writes
 `data/all.jsonl`. Commit the verified projection on `main` before a consumer
 requests its Git-addressed `givecare.artifact-ref/v1`. See
 `docs/evidence.md`.

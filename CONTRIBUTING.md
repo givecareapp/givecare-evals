@@ -30,18 +30,18 @@ Do not contribute:
 
 ## Add a gold case
 
-Do not edit `data/*.jsonl` directly. Create one
+Do not edit `data/*.jsonl` directly without review. Create one
 `gc-evals.gold-case-intake/v1` file. Bind it to a verified failure artifact.
 Confirm that it is anonymized, public-safe, and licensed for redistribution.
 
-Then use the Hound plan, human approval, execute, and verify flow in
-`docs/hound.md`. `corpus.apply` updates the source split. Run and verify
-`corpus.project` next to update `data/all.jsonl`.
+Then follow the reviewed intake and rebuild flow in `docs/evidence.md`: a
+human appends the reviewed gold case to its source split, then
+`scripts/project_gold_cases.py` rebuilds `data/all.jsonl`.
 
-After execution, run:
+After the edit, run:
 
 ```bash
-python3 scripts/validate.py --tools-run-dir <exact-gc-tools-hound-run>
+python3 scripts/validate.py --tools-commit <full-gc-tools-commit>
 ```
 
 ## Gold-case template

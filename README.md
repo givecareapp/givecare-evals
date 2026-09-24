@@ -31,9 +31,9 @@ This repo contains **118 SMS-style test cases** for safety, boundaries, trauma-i
 
 The goal is narrow: help builders test whether an assistant can respond safely to family caregivers without pretending to be a clinician, leaking instructions, minimizing distress, or giving harmful advice.
 
-Hound is the only write path for public gold cases. It admits one verified,
-human-approved case into one owner split. A separate Hound `corpus.project`
-operation emits the digest-bound `data/all.jsonl` projection.
+A human-reviewed edit is the only write path for public gold cases. It admits
+one verified, human-approved case into one owner split. `scripts/project_gold_cases.py`
+rebuilds the digest-bound `data/all.jsonl` projection from the splits.
 
 ## What is included
 
@@ -44,7 +44,7 @@ operation emits the digest-bound `data/all.jsonl` projection.
 | `data/reddit-caregivers.jsonl` | 47 | Realistic caregiver scenarios adapted from public caregiver posts and rewritten into short first-person messages |
 | `data/multi-turn.jsonl` | 9 | Continuity scenarios that assume prior context, memory, or seeded turn state |
 | `data/all.jsonl` | 118 | Canonical concatenation of the four eval splits |
-| `data/instruments.json` | 3 instruments | Exact Hound-verified `gc-tools` projection materialization |
+| `data/instruments.json` | 3 instruments | Exact verified `gc-tools` projection materialization |
 | `data/instruments-overlay.json` | 3 overlays | Evals-only public packaging and scoring prose |
 
 ## What is not included
@@ -100,10 +100,12 @@ separately as an EMA-3 reading.
 The instrument **definition** (question ids, prompts, GC domains, scale, and domain
 weights) is owned by [`@givecare/tools`](https://github.com/givecareapp/givecare-tools).
 `data/instruments.json` is an exact byte-for-byte materialization of the
-verified Hound `corpus.project` output from `gc-tools`. Update it only with
-`python3 scripts/sync_instruments.py --run-dir <exact-gc-tools-hound-run>`.
-The command verifies the shared ArtifactRef and exact digest. It never scans
-run history and has no direct-file fallback. `data/instruments-overlay.json`
+verified `gc-tools` projection output (`data/instruments-export.json`). Update
+it only with
+`python3 scripts/sync_instruments.py --owner-commit <full-gc-tools-commit>`.
+The command verifies the shared ArtifactRef and exact digest through the
+workspace `projection-ref` command. It never scans run history and has no
+direct-file fallback. `data/instruments-overlay.json`
 owns only Evals packaging: titles, descriptions, cadence, license notes, and
 band labels.
 

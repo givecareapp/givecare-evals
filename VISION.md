@@ -40,4 +40,4 @@ product assumptions.
 ## Document boundary
 
 Dataset boundaries live in [CODEMAP.md](CODEMAP.md). Operating detail lives in
-[CLAUDE.md](CLAUDE.md) and [the Hound guide](docs/hound.md).
+[CLAUDE.md](CLAUDE.md) and [the intake guide](docs/evidence.md).

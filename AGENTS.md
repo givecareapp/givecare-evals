@@ -3,8 +3,8 @@
 Type: reference.
 
 This repo owns public eval records and instrument distribution. Root workspace
-`AGENTS.md` rules apply; this file adds local gates. Read `VISION.md` before
-non-trivial work.
+`AGENTS.md` rules apply; this file adds local gates. Owner intent:
+`/home/deploy/wiki/aims/givecare-instruments.md`.
 
 ## Authority
 
@@ -35,6 +35,8 @@ Before handoff run the unit tests and `scripts/validate.py --tools-commit <full-
 - Contribute no private conversations, production traces, raw forum text, usernames,
   identifying links, unlicensed instruments, benefits catalogs, or private prompts
   and product internals ([`CONTRIBUTING.md`](CONTRIBUTING.md)).
+- No runner, verifier, scoring implementation, or live policy system here. A
+  failure signal never promotes itself into public data.
 - Do not present clinical, legal, or eligibility determinations as ground truth.
 - Report private or unsafe content privately per [`SECURITY.md`](SECURITY.md); never
   in a public issue.

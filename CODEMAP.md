@@ -25,7 +25,7 @@ docs/evidence.md              gold-case intake and rebuild (how-to)
 .github/workflows/ci.yml      runs the unit tests
 .givecare/module.json         module declaration
 README.md                     dataset card
-VISION.md  ROADMAP.md         scope and known gaps
+ROADMAP.md                    known gaps
 CONTRIBUTING.md  SECURITY.md  contributor and reporting rules
 CITATION.cff  LICENSE         citation metadata, CC-BY-4.0
 ```

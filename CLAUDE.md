@@ -2,8 +2,7 @@
 
 Type: reference.
 
-Operational map for the public dataset. Rules: [`AGENTS.md`](AGENTS.md). Scope:
-`VISION.md`. Files and data contract: [`CODEMAP.md`](CODEMAP.md).
+Operational map for the public dataset. Rules: [`AGENTS.md`](AGENTS.md). Files and data contract: [`CODEMAP.md`](CODEMAP.md).
 
 Each JSONL record has a stable ID, input, expected behavior, category, and
 metadata the validator requires. Keep inputs anonymized and usable without

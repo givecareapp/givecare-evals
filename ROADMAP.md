@@ -24,7 +24,7 @@ baseline scorecards, and benchmark reports belong in `../gc-bench`.
    - Gap: no per-case public source URL is retained. This protects privacy but limits reproducibility.
 
 4. **Coverage**
-   - Current state: 118 English, SMS-style cases.
+   - Current state: English, SMS-style cases.
    - Gap: limited language, geography, channel, disability, cultural, and care-setting coverage.
 
 5. **Distribution notes**

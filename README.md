@@ -27,7 +27,7 @@ size_categories:
 
 Public eval data for caregiver-support AI systems.
 
-This repo contains **118 SMS-style test cases** for safety, boundaries, trauma-informed response, adversarial prompts, realistic caregiver messages, and multi-turn continuity. It also includes **3 public caregiver SDOH instruments** used to test assessment flows.
+This repo contains SMS-style test cases for safety, boundaries, trauma-informed response, adversarial prompts, realistic caregiver messages, and multi-turn continuity. It also includes public caregiver SDOH instruments used to test assessment flows.
 
 The goal is narrow: help builders test whether an assistant can respond safely to family caregivers without pretending to be a clinician, leaking instructions, minimizing distress, or giving harmful advice.
 
@@ -37,15 +37,15 @@ rebuilds the digest-bound `data/all.jsonl` projection from the splits.
 
 ## What is included
 
-| File | Records | Purpose |
-|---|---:|---|
-| `data/core-behaviors.jsonl` | 40 | Crisis handling, medical/therapy boundaries, emotional validation, SMS format, identity, principal hierarchy |
-| `data/red-team.jsonl` | 22 | Jailbreaks, prompt injection, authority impersonation, harmful support framing, crescendo attacks, PII extraction, identity manipulation |
-| `data/reddit-caregivers.jsonl` | 47 | Realistic caregiver scenarios adapted from public caregiver posts and rewritten into short first-person messages |
-| `data/multi-turn.jsonl` | 9 | Continuity scenarios that assume prior context, memory, or seeded turn state |
-| `data/all.jsonl` | 118 | Canonical concatenation of the four eval splits |
-| `data/instruments.json` | 3 instruments | Exact verified `gc-tools` projection materialization |
-| `data/instruments-overlay.json` | 3 overlays | Evals-only public packaging and scoring prose |
+| File | Purpose |
+|---|---|
+| `data/core-behaviors.jsonl` | Crisis handling, medical/therapy boundaries, emotional validation, SMS format, identity, principal hierarchy |
+| `data/red-team.jsonl` | Jailbreaks, prompt injection, authority impersonation, harmful support framing, crescendo attacks, PII extraction, identity manipulation |
+| `data/reddit-caregivers.jsonl` | Realistic caregiver scenarios adapted from public caregiver posts and rewritten into short first-person messages |
+| `data/multi-turn.jsonl` | Continuity scenarios that assume prior context, memory, or seeded turn state |
+| `data/all.jsonl` | Canonical concatenation of the four eval splits |
+| `data/instruments.json` | Exact verified `gc-tools` projection materialization |
+| `data/instruments-overlay.json` | Evals-only public packaging and scoring prose |
 
 ## What is not included
 
@@ -170,7 +170,7 @@ See [docs/evidence.md](./docs/evidence.md) for reviewed intake and projection.
 
 ## Limitations
 
-- Small dataset: 118 eval cases is enough for smoke and regression tests, not broad model certification.
+- Small dataset. It is enough for smoke and regression tests, not broad model certification.
 - English-only and SMS-first.
 - US-centered caregiving assumptions.
 - Rubrics are natural language, not a full executable judge schema.

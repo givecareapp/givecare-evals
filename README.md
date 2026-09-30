@@ -100,7 +100,7 @@ separately as an EMA-3 reading.
 The instrument **definition** (question ids, prompts, GC domains, scale, and domain
 weights) is owned by [`@givecare/tools`](https://github.com/givecareapp/givecare-tools).
 `data/instruments.json` is an exact byte-for-byte materialization of the
-verified `gc-tools` projection output (`data/instruments-export.json`). Update
+verified `gc-tools` projection output (`gc-tools/data/instruments-export.json`). Update
 it only with
 `python3 scripts/sync_instruments.py --owner-commit <full-gc-tools-commit>`.
 The command verifies the shared ArtifactRef and exact digest through the

@@ -311,8 +311,6 @@ def resolve_verified_tools_projection(
             "public",
             "--owner-repo",
             "gc-tools",
-            "--capability",
-            "methods.assessment.project",
             "--artifact-owner",
             "tools.assessments",
             "--artifact-id",

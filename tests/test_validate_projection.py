@@ -14,19 +14,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class PublicDatasetTests(unittest.TestCase):
-    def test_module_declares_the_exact_tools_projection_verifier(self):
+    def test_module_declares_the_tools_consume_and_gold_case_produce(self):
         declaration = json.loads((ROOT / ".givecare/module.json").read_text())
-        capabilities = {item["name"]: item for item in declaration["modules"][0]["capabilities"]}
-        self.assertEqual(
-            capabilities["evals.instruments.sync-owner-projection"],
-            {
-                "name": "evals.instruments.sync-owner-projection",
-                "effect": "write",
-                "gate": "none",
-                "adapter": {"kind": "owner-projection-sync", "ref": "scripts/sync_instruments.py"},
-                "accepts": ["givecare.artifact-ref/v1"],
-                "emits": ["@givecare/tools.InstrumentExport"],
-            },
+        self.assertIn(
+            {"id": "@givecare/tools.InstrumentExport", "from": "gc-tools"},
+            declaration["consumes"],
+        )
+        self.assertIn(
+            {"id": "gc-evals.gold-case/v1", "path": "data/all.jsonl", "for": ["gc-bench"]},
+            declaration["produces"],
         )
 
     def test_local_public_dataset_and_overlay_remain_valid(self):

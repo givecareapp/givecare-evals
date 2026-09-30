@@ -7,8 +7,7 @@ the owner split/order checks against it. Run this after editing a split
 file, inspect the diff, then commit on `main`.
 
 Consumers never run this script. They pin the committed bytes through the
-workspace `projection-ref` command (capability `evals.gold-cases.project`)
-and verify the digest.
+workspace `projection-ref` command and verify the digest.
 """
 
 from __future__ import annotations

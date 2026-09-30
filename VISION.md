@@ -1,5 +1,7 @@
 # gc-evals Vision
 
+Type: explanation.
+
 `gc-evals` is GiveCare's public, reusable dataset of caregiver AI gold cases and
 assessment instrument records.
 

@@ -25,7 +25,7 @@ Every JSONL record has `id`, `split`, `category`, `subcategory`, `input`,
 ## Commands
 
 ```bash
-python3 -m unittest discover -s tests
+scripts/check.sh    # offline: unittest discover
 python3 scripts/validate.py --tools-commit <full-gc-tools-commit>
 python3 scripts/project_gold_cases.py     # rebuild data/all.jsonl
 python3 scripts/sync_instruments.py --owner-commit <full-gc-tools-commit>

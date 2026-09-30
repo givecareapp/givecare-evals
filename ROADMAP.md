@@ -1,6 +1,6 @@
-<!-- Diátaxis: explanation -->
-
 # Roadmap and known gaps
+
+Type: explanation.
 
 GiveCare Evals is useful today as a small public dataset. It is not a benchmark
 runner: executable harnesses, model adapters, judge prompts, scoring scripts,

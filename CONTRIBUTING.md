@@ -1,6 +1,6 @@
-<!-- Diátaxis: how-to -->
-
 # Contributing
+
+Type: how-to.
 
 GiveCare Evals is a small public dataset for caregiver-support AI behavior. Contributions should improve coverage without adding private, identifying, or licensed material.
 

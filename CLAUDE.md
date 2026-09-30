@@ -2,45 +2,34 @@
 
 Type: reference.
 
-Operational guide for the public dataset. Read `VISION.md` for scope.
+Operational map for the public dataset. Rules: [`AGENTS.md`](AGENTS.md). Scope:
+`VISION.md`. Files and data contract: [`CODEMAP.md`](CODEMAP.md).
 
-## Files
+Each JSONL record has a stable ID, input, expected behavior, category, and
+metadata the validator requires. Keep inputs anonymized and usable without
+private GiveCare context.
 
-- `data/core-behaviors.jsonl`: core cases.
-- `data/red-team.jsonl`: adversarial cases.
-- `data/all.jsonl`: generated merged dataset.
-- `data/instruments.json`: exact materialization of the verified Tools projection.
-- `data/instruments-overlay.json`: Evals-only public packaging fields.
-- `scripts/project_gold_cases.py`: rebuilds `data/all.jsonl` from the splits.
-- `scripts/validate.py`: schema, IDs, splits, order, and safety checks.
-- `CODEMAP.md`: data flow and boundaries.
-
-Each JSONL record has a stable ID, input, expected behavior, category, source,
-and metadata required by the validator. Keep inputs anonymized and usable
-without private GiveCare context.
+## Commands
 
 ```bash
+python3 -m unittest discover -s tests
 python3 scripts/validate.py --tools-commit <full-gc-tools-commit>
-```
-
-Every gold-case write is a reviewed, human-made edit; there is no automated
-writer. `evals.gold-cases.apply` requires one verified, public-safe intake and
-human approval; a reviewer appends it to the selected owner split by hand. Run
-`python3 scripts/project_gold_cases.py` next. That script alone writes
-`data/all.jsonl`. Commit the verified projection on `main` before a consumer
-requests its Git-addressed `givecare.artifact-ref/v1`. See
-`docs/evidence.md`.
-
-`gc-bench` imports only that owner projection as candidates. It owns execution
-and verdicts. `gc-tools` owns executable scoring semantics.
-
-Materialize one exact Tools projection before validation:
-
-```bash
+python3 scripts/project_gold_cases.py     # rebuild data/all.jsonl
 python3 scripts/sync_instruments.py --owner-commit <full-gc-tools-commit>
 ```
 
-The command verifies the public `givecare.artifact-ref/v1` and copies its exact
-committed bytes to `data/instruments.json`. The validator rejects any drift.
-The public reader composes that materialization with `data/instruments-overlay.json`.
-The declared consumer boundary is `evals.instruments.sync-owner-projection`.
+`sync_instruments.py` verifies the public `givecare.artifact-ref/v1` and copies its
+exact committed bytes to `data/instruments.json`; the validator rejects drift. The
+public reader composes it with `data/instruments-overlay.json`.
+
+## Gotchas
+
+- `data/all.jsonl` is generated; never hand-edit it.
+- `data/instruments.json` is a byte copy of the Tools projection, not an Evals edit.
+- `--tools-commit` must be a full commit reachable in the sibling `gc-tools`.
+
+## Pointers
+
+- Gold-case intake and rebuild: [`docs/evidence.md`](docs/evidence.md).
+- `gc-bench` imports the owner projection as candidates and owns execution and
+  verdicts. `gc-tools` owns executable scoring semantics.

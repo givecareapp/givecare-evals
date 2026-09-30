@@ -1,6 +1,6 @@
 # Native gold-case intake
 
-<!-- Diataxis: how-to -->
+Type: how-to.
 
 There is no automated write adapter for `evals.gold-cases.apply`. The owner
 declaration binds it to `human-review`: a reviewer applies one strict GiveCare

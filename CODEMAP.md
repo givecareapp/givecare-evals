@@ -1,74 +1,41 @@
 # Codemap
 
-Generated: 2026-08-06
+Type: reference.
 
-## Architecture
+GiveCare Evals is a dependency-free dataset repo. JSON/JSONL under `data/` is the
+source of truth. No runtime service or model adapter lives here.
 
-GiveCare Evals is a dependency-free dataset repo. The source of truth is JSON/JSONL under `data/`. A human-reviewed Git edit is the owner-local change path; `scripts/project_gold_cases.py` is the plain owner projection script. There is no runtime service or model adapter in this repo.
-
-## Files
-
-| Path | Purpose |
-|------|---------|
-| `data/core-behaviors.jsonl` | Functional behavior checks for caregiver-support assistants |
-| `data/red-team.jsonl` | Prompt attacks and boundary violations |
-| `data/reddit-caregivers.jsonl` | SMS-style caregiver scenarios adapted from public posts |
-| `data/multi-turn.jsonl` | Cases requiring assumed context or continuity |
-| `data/all.jsonl` | Canonical concatenation of the four eval splits |
-| `data/instruments.json` | Exact verified materialization of the Tools projection |
-| `data/instruments-overlay.json` | Evals-only public packaging fields |
-| `scripts/project_gold_cases.py` | Rebuilds `data/all.jsonl` from the splits and re-validates it |
-| `scripts/validate.py` | Stdlib validation for dataset shape and split consistency |
-| `scripts/sync_instruments.py` | Exact Tools projection materializer |
-| `scripts/read_instruments.py` | Public projection-plus-overlay reader |
+```text
+data/
+  core-behaviors.jsonl        functional behavior checks
+  red-team.jsonl              prompt attacks and boundary violations
+  reddit-caregivers.jsonl     SMS-style scenarios adapted from public posts
+  multi-turn.jsonl            cases needing assumed context or continuity
+  all.jsonl                   generated concatenation of the four splits
+  instruments.json            exact materialization of the gc-tools projection
+                              (owner file: gc-tools data/instruments-export.json)
+  instruments-overlay.json    Evals-only public packaging fields
+scripts/
+  project_gold_cases.py       rebuilds data/all.jsonl and re-validates it
+  validate.py                 stdlib validation of shape, splits, and parity
+  sync_instruments.py         materializes one exact gc-tools projection
+  read_instruments.py         public projection-plus-overlay reader
+tests/                        unit tests for validation and projection
+docs/evidence.md              gold-case intake and rebuild (how-to)
+.github/workflows/ci.yml      runs the unit tests
+.givecare/module.json         module declaration
+README.md                     dataset card
+VISION.md  ROADMAP.md         scope and known gaps
+CONTRIBUTING.md  SECURITY.md  contributor and reporting rules
+CITATION.cff  LICENSE         citation metadata, CC-BY-4.0
+```
 
 ## Data contract
 
-Each JSONL record must include:
+Every JSONL record has `id`, `split`, `category`, `subcategory`, `input`,
+`expected_behaviors`, and `forbidden_patterns`; `multi-turn` records also carry
+`context.prior_state`. `data/all.jsonl` is the four splits in the order
+`core-behaviors`, `red-team`, `reddit-caregivers`, `multi-turn`. Each split stays
+at or above its shipped baseline count; a reviewed gold case is only added.
 
-- `id`
-- `split`
-- `category`
-- `subcategory`
-- `input`
-- `expected_behaviors`
-- `forbidden_patterns`
-- `context.prior_state` for `multi-turn` records
-
-`data/all.jsonl` must equal this exact split order:
-
-1. `core-behaviors.jsonl`
-2. `red-team.jsonl`
-3. `reddit-caregivers.jsonl`
-4. `multi-turn.jsonl`
-
-Each split must stay at or above its shipped baseline count. A reviewed gold
-case is only ever added; there is no delete operation.
-
-`evals.gold-cases.apply` is the only supported gold-case authoring path. There
-is no automated adapter for it: a reviewer binds a verified failure artifact,
-release checks, and one gold case to the shared root Trace validator, then
-appends the record to the selected source split by hand.
-The shared root Trace validator resolves historical module pins before the
-reviewer checks the `evals.dataset` target.
-
-Run `python3 scripts/project_gold_cases.py` after each apply. It alone
-rebuilds `data/all.jsonl`; a consumer verifies its `givecare.artifact-ref/v1`
-through the workspace `projection-ref` command before import.
-
-Instrument sync consumes only one explicit verified gc-tools `methods.assessment.project`
-projection at an exact owner commit. That commit must carry the exact public
-ArtifactRef and digest for `data/instruments-export.json`. The sync writes
-those exact bytes to the fixed `data/instruments.json` path. The validator
-rejects byte drift and overlay attempts to shadow owner fields. The module
-capability is `evals.instruments.sync-owner-projection`.
-
-## Repo boundaries
-
-| Concern | Owner |
-|---------|-------|
-| Public eval records | `givecare-evals` |
-| Public SDOH scoring implementation | `givecare-tools` / `@givecare/tools` |
-| Benchmark runner, model adapters, judge prompts | `gc-bench` |
-| Benefits data | `gc-benefits` |
-| Production runtime | `gc-sms` |
+Gold-case authoring and projection: [`docs/evidence.md`](docs/evidence.md).

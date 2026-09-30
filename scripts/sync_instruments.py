@@ -17,19 +17,13 @@ PROTOCOL_CLI = GIVECARE_ROOT / "scripts" / "givecare_protocol.py"
 TARGET = ROOT / "data" / "instruments.json"
 
 sys.path.insert(0, str(SCRIPTS))
+sys.path.insert(0, str(GIVECARE_ROOT / "scripts"))
+from projection_io import fsync_directory  # noqa: E402
 from validate import resolve_verified_tools_projection  # noqa: E402
 
 
 class SyncError(Exception):
     pass
-
-
-def _fsync_directory(path: Path) -> None:
-    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
-    try:
-        os.fsync(descriptor)
-    finally:
-        os.close(descriptor)
 
 
 def materialize(
@@ -62,7 +56,7 @@ def materialize(
             os.fsync(stream.fileno())
         temporary.chmod(0o644)
         os.replace(temporary, target)
-        _fsync_directory(target.parent)
+        fsync_directory(target.parent)
     finally:
         temporary.unlink(missing_ok=True)
     return True

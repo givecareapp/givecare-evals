@@ -75,6 +75,7 @@ Before handoff run the unit tests and `scripts/validate.py --tools-commit <full-
 
 ## Pointers
 
+- Workspace map: `python3 /home/deploy/repos/givecare/scripts/givecare_protocol.py map`
 - `docs/evidence.md`: gold-case intake and rebuild.
 - `gc-bench` imports the owner projection as candidates and owns execution and
   verdicts. `gc-tools` owns executable scoring semantics.

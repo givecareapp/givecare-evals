@@ -9,7 +9,6 @@
   ],
   "consumes": [
     {"id": "@givecare/tools.InstrumentExport", "from": "gc-tools"},
-    {"id": "care.learning.propose", "from": "gc-sms"},
     {"id": "givecare.protocol", "from": "."}
   ]
 }

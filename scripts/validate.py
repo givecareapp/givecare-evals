@@ -25,7 +25,7 @@ SPLITS = [
     "multi-turn",
 ]
 MINIMUM_SPLIT_COUNTS = {
-    "core-behaviors": 40,
+    "core-behaviors": 41,
     "red-team": 22,
     "reddit-caregivers": 47,
     "multi-turn": 9,

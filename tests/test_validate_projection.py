@@ -29,7 +29,7 @@ class PublicDatasetTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("validate", ROOT / "scripts/validate.py")
         validator = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(validator)
-        self.assertEqual(validator.validate_gold_cases(), 118)
+        self.assertEqual(validator.validate_gold_cases(), 119)
         validator.validate_instruments()
         view = validator.build_instrument_records()
         self.assertEqual(
